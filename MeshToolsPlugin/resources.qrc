@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/plugins/meshtoolsplugin" >
+        <file>icon_addmesh.svg</file>
+        <file>icon_newmesh.svg</file>
+        <file>icon_savemesh.svg</file>
+    </qresource>
+</RCC>
