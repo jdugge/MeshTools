@@ -111,6 +111,8 @@ class MeshToolsPlugin:
     # run method that performs all the real work
     def runGenerate(self):
         # show the dialog
+        self.dlgGenerate.populateLayerComboBoxes()
+        self.dlgGenerate.populateAttributeComboBoxes()
         self.dlgGenerate.show()
         # Run the dialog event loop
         result = self.dlgGenerate.exec_()
@@ -150,56 +152,7 @@ def createMemoryMeshLayer(mesh, name="Mesh"):
     vl.updateExtents()
     QgsMapLayerRegistry.instance().addMapLayer(vl)
         
-    ###
-def getLayerByName(layer_name):
-    for name, search_layer in qgis.QgsMapLayerRegistry.instance().mapLayers().iteritems():
-        if search_layer.name() == layer_name:
-            return search_layer
-        return None
-
-def listLayerIDsOfType(layerType):
-    return([layerID for layerID in qgis.QgsMapLayerRegistry.instance().mapLayers()
-            if qgis.QgsMapLayerRegistry.instance().mapLayer(layerID).type()==layerType])
-
-def listLayerNamesOfType(layerType):
-    return([qgis.QgsMapLayerRegistry.instance().mapLayer(layerID).name() for layerID in qgis.QgsMapLayerRegistry.instance().mapLayers()
-            if qgis.QgsMapLayerRegistry.instance().mapLayer(layerID).type()==layerType])
-
-def listLayersOfGeometryType(geometry_type):
-    if type(geometry_type) != list: geometry_type = [geometry_type]
-    selectedlayers = []
-    vectorlayerIDs = listLayerIDsOfType(qgis.QgsMapLayer.VectorLayer)
-    for layerID in vectorlayerIDs:
-        layer = qgis.QgsMapLayerRegistry.instance().mapLayer(layerID)
-        provider = layer.dataProvider()
-        feat = qgis.QgsFeature()
-        if provider.featureAtId(0, feat):
-            if feat.geometry().wkbType() in geometry_type:
-                selectedlayers.append(layer.name())
-    return(selectedlayers)
-
-def populateComboBox(combobox, geometryTypes, allowRaster=True):
-    combobox.clear()
-    for geometryType in geometryTypes:
-        combobox.addItems(listLayersOfGeometryType(geometryTypes))
-    if allowRaster:
-        combobox.addItems(listLayerNamesOfType(qgis.QgsMapLayer.RasterLayer))
-
-def listLayerAttributes(self, layer):
-    return [str(field.name()) for index, field
-        in layer.dataProvider().fields().iteritems()]
-
-def setAttributeComboBox(self, signal, attributeComboBox):
-    sender = self.dlg.sender()
-    layerName = sender.currentText()
-    if layerName != '':
-        attributeComboBox.setEnabled(True)
-        layer = emfhelpers.getLayerByName(self,layerName)
-        attributeComboBox.clear()
-        attributeComboBox.addItems(listLayerAttributes(self, layer))
-    else:
-        attributeComboBox.clear()
-        attributeComboBox.setEnabled(False)
+  
         
 def generateMesh(boundaryLayerName='', polygonLayerName='',
                  lineLayerName='', pointLayerName='',
@@ -207,22 +160,15 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
                  triangleEdgeTypeValue=1, triangleEdgeTypeAttribute=''):
     # Process the polygon layer
     graph = mt.pslGraph()
-    boundaryLayer = ftools_utils.getVectorLayerByName(boundaryLayerName)
-    provider = boundaryLayer.dataProvider()
-    #lengthAttributeID = provider.fieldNameIndex(self.dlg.ui.cbPolygonsLength.currentText())
-    #typeAttributeID = provider.fieldNameIndex(self.dlg.ui.cbPolygonsMarker.currentText())
-    #provider.select([lengthAttributeID,typeAttributeID])
-    feature = QgsFeature()
-    while provider.nextFeature(feature):
-        #lengthAttribute = feature.attributeMap()[lengthAttributeID].toFloat()[0]
-        #typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]
-        geometry = shapely.wkb.loads(feature.geometry().asWkb())
-        graph.addEdges(listAllEdges(geometry), 10, 1)
-        #edgelist = zip(edgelist,itertools.cycle([(lengthAttribute, typeAttribute)]))
-        #with open('edgelist.pickle','w') as f:
-        #    pickle.dump(edgelist,f)
+    graph = addLayerFeaturesToGraph(boundaryLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
+    if polygonLayerName != "":
+        graph = addLayerFeaturesToGraph(polygonLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
+    if lineLayerName != "":
+        graph = addLayerFeaturesToGraph(lineLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
+    if pointLayerName != "":
+        graph = addLayerFeaturesToGraph(pointLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
     mesh = mt.buildMesh(graph)
-    createMemoryMeshLayer(mesh, "Mesh")
+    createMemoryMeshLayer(mesh, "Mesh2")
 #    if self.dlg.ui.cbLines.currentText() != '':
 #        layer = emfhelpers.getLayerByName(self,self.dlg.ui.cbLines.currentText())
 #        provider = layer.dataProvider()
@@ -250,6 +196,33 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
 #            graph.addEdges(emfhelpers.listAllEdges(geometry)) 
 
 # List all edges of a QGis feature
+
+def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue,
+                            triangleEdgeTypeAttribute, triangleEdgeTypeValue):
+    layer = ftools_utils.getVectorLayerByName(layerName)
+    provider = layer.dataProvider()
+    lengthAttributeID = provider.fieldNameIndex(triangleEdgeLengthAttribute)
+    typeAttributeID = provider.fieldNameIndex(triangleEdgeTypeAttribute)
+    provider.select([lengthAttributeID, typeAttributeID])
+    feature = QgsFeature()
+    while provider.nextFeature(feature):
+        if lengthAttributeID != -1:
+            edgeLength = feature.attributeMap()[lengthAttributeID].toFloat()[0]
+        else:
+            edgeLength = triangleEdgeLengthValue
+        
+        if typeAttributeID != -1:
+            edgeType = feature.attributeMap()[typeAttributeID].toInt()[0]
+        else:
+            edgeType = triangleEdgeTypeValue
+        #typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]
+        geometry = shapely.wkb.loads(feature.geometry().asWkb())
+        graph.addEdges(listAllEdges(geometry), edgeLength, edgeType)
+        #edgelist = zip(edgelist,itertools.cycle([(lengthAttribute, typeAttribute)]))
+        #with open('edgelist.pickle','w') as f:
+        #    pickle.dump(edgelist,f)
+    return graph
+
 def listAllEdges(object):
     type = object.geom_type
     edges = list()
