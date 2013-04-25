@@ -31,8 +31,7 @@ import meshtoolsplugin as mtp
 import sys, os, imp
 import fTools
 path = os.path.dirname(fTools.__file__)
-ftu = imp.load_source('ftu', os.path.join(path,'tools','ftools_utils.py'))
-import ftools_utils as ftu
+ftu = imp.load_source('ftools_utils', os.path.join(path,'tools','ftools_utils.py'))
 
 class MeshToolsPluginDialogGenerate(QtGui.QDialog):
     def __init__(self):
@@ -41,16 +40,13 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         self.ui = Ui_MeshToolsPlugin()
         self.ui.setupUi(self)
         self.ui.cbAlgorithm.addItems(['EasyMesh','Triangle'])
+        self.populateComboBoxes()
         #self.ui.cbPolygons.currentIndexChanged.connect(
         #    lambda: mtp.setAttributeComboBox(self, self.ui.cbLength))
-        
-        # Trigger repopulation of attribute comboboxes with changes layer comboboxes
-        self.ui.cbBoundaryPolygons.currentIndexChanged.connect(self.populateAttributeComboBoxes)
-        
         self.ui.cbPolygons.currentIndexChanged.emit(0)
         self.ui.pbGenerate.clicked.connect(self.generateMesh)
     
-    def populateLayerComboBoxes(self):
+    def populateComboBoxes(self):
         self.ui.cbBoundaryPolygons.clear()
         self.ui.cbBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
         
@@ -61,18 +57,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
             combobox.addItem('')
             combobox.addItems(ftu.getLayerNames([geometryType]))
         #mtp.populateComboBox(self.ui.cbPolygons, [qgis.QGis.WKBPolygon], allowRaster=False)
-        #self.ui.cbLength.addItems(["Length","Type"])
-    
-    def populateAttributeComboBoxes(self):
-        self.ui.cbLength.clear()
-        fieldNames = set()
-        for combobox in [self.ui.cbBoundaryPolygons, self.ui.cbPolygons,
-                         self.ui.cbLines, self.ui.cbPoints]:
-            if (combobox.currentText() != ""):
-                layer = ftu.getVectorLayerByName(combobox.currentText())
-                fieldNames.update(ftu.getFieldNames(layer))
-        #QtCore.QStringList(fieldNames)
-        self.ui.cbLength.addItems(list(fieldNames))
+        self.ui.cbLength.addItems(["Length","Type"])
     
     def generateMesh(self):
         boundaryLayerName = self.ui.cbBoundaryPolygons.currentText()
@@ -80,15 +65,6 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
             QtGui.QMessageBox.warning(self, 'EasyMesh Frontend',
                                 "Please select a polygon layer for the boundary of the meshing area")
             return
-        
-        # Default edge length value
-        edgeLengthValue = float(self.ui.leLength.text())
-        
-        if self.ui.chkbLengthFromLayer.isChecked():
-            edgeLengthAttribute = self.ui.cbLength.currentText()
-        else:
-            edgeLengthAttribute = ""
-        mtp.generateMesh(boundaryLayerName, triangleEdgeLengthValue=edgeLengthValue,
-                         triangleEdgeLengthAttribute=edgeLengthAttribute)
+        mtp.generateMesh(boundaryLayerName)
         
    

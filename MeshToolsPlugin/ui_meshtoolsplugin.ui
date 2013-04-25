@@ -6,14 +6,132 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>427</width>
-    <height>580</height>
+    <width>303</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Generate Mesh</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Domain boundary layer</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Polygons</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="cbBoundaryPolygons">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pbNewPolygons_2">
+        <property name="text">
+         <string>New...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Refinement layers</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="1" column="1">
+       <widget class="QComboBox" name="cbLines"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pbNewLines">
+        <property name="text">
+         <string>New...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Lines</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="cbPolygons">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Polygons</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pbNewPolygons">
+        <property name="text">
+         <string>New...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Points</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="cbPoints"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="pbNewPoints">
+        <property name="text">
+         <string>New...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <zorder></zorder>
+     <zorder></zorder>
+     <zorder>label</zorder>
+     <zorder>cbPolygons</zorder>
+     <zorder>pbNewPolygons</zorder>
+     <zorder>label_2</zorder>
+     <zorder>cbLines</zorder>
+     <zorder>pbNewLines</zorder>
+     <zorder>label_3</zorder>
+     <zorder>cbPoints</zorder>
+     <zorder>pbNewPoints</zorder>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -34,13 +152,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QStackedWidget" name="swAlgorithmControls">
@@ -70,156 +181,48 @@
           <property name="margin">
            <number>0</number>
           </property>
-          <item row="1" column="0" colspan="2">
-           <widget class="QGroupBox" name="groupBox">
-            <property name="title">
-             <string>Refinement layers</string>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Edge Length:</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_6">
-             <item row="1" column="1">
-              <widget class="QComboBox" name="cbLines"/>
-             </item>
-             <item row="1" column="2">
-              <widget class="QPushButton" name="pbNewLines">
-               <property name="text">
-                <string>New...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Lines</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="cbPolygons">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Polygons</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QPushButton" name="pbNewPolygons">
-               <property name="text">
-                <string>New...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>Points</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QComboBox" name="cbPoints"/>
-             </item>
-             <item row="2" column="2">
-              <widget class="QPushButton" name="pbNewPoints">
-               <property name="text">
-                <string>New...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-            <zorder>label</zorder>
-            <zorder>cbPolygons</zorder>
-            <zorder>pbNewPolygons</zorder>
-            <zorder>label_2</zorder>
-            <zorder>cbLines</zorder>
-            <zorder>pbNewLines</zorder>
-            <zorder>label_3</zorder>
-            <zorder>cbPoints</zorder>
-            <zorder>pbNewPoints</zorder>
            </widget>
           </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QGroupBox" name="groupBox_2">
-            <property name="title">
-             <string>Domain boundary layer</string>
+          <item row="2" column="0" colspan="2">
+           <widget class="QRadioButton" name="rbLengthFromLayer">
+            <property name="text">
+             <string>From layer property</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string>Polygons</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="cbBoundaryPolygons">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QPushButton" name="pbNewPolygons_2">
-               <property name="text">
-                <string>New...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QGroupBox" name="groupBox_3">
-            <property name="title">
-             <string>Triangle edge length</string>
+          <item row="2" column="2">
+           <widget class="QComboBox" name="cbLength">
+            <property name="enabled">
+             <bool>false</bool>
             </property>
-            <layout class="QGridLayout" name="gridLayout_7">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_10">
-               <property name="text">
-                <string>Default value in map units</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="leLength">
-               <property name="text">
-                <string>1.0</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QCheckBox" name="chkbLengthFromLayer">
-               <property name="text">
-                <string>Use value from layer property</string>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="cbLength">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="rbLengthFixed">
+            <property name="text">
+             <string>Fixed value</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="leLength">
+            <property name="text">
+             <string>1.0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
          </layout>
@@ -499,9 +502,10 @@
   <zorder>line</zorder>
   <zorder>line_2</zorder>
   <zorder>swAlgorithmControls</zorder>
+  <zorder>groupBox</zorder>
+  <zorder>groupBox_2</zorder>
   <zorder>widget</zorder>
   <zorder>verticalSpacer</zorder>
-  <zorder></zorder>
  </widget>
  <resources/>
  <connections>
@@ -550,6 +554,38 @@
     <hint type="destinationlabel">
      <x>144</x>
      <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbLengthFixed</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>leLength</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>195</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbLengthFromLayer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbLength</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>225</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>226</y>
     </hint>
    </hints>
   </connection>
@@ -614,22 +650,6 @@
     <hint type="destinationlabel">
      <x>236</x>
      <y>292</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkbLengthFromLayer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>cbLength</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>149</x>
-     <y>330</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>335</x>
-     <y>331</y>
     </hint>
    </hints>
   </connection>
