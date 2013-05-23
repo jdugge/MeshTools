@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_meshtoolsplugin.ui'
 #
-# Created: Wed Apr 24 16:58:12 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Thu May 23 15:02:03 2013
+#      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -149,6 +149,7 @@ class Ui_MeshToolsPlugin(object):
         self.sbType.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.sbType.setMinimum(0)
         self.sbType.setMaximum(9999)
+        self.sbType.setProperty("value", 1)
         self.sbType.setObjectName(_fromUtf8("sbType"))
         self.gridLayout_8.addWidget(self.sbType, 0, 1, 1, 1)
         self.chkbTypeFromLayer = QtGui.QCheckBox(self.groupBox_4)

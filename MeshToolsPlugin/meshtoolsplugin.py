@@ -29,20 +29,20 @@ import resources_rc
 # Import the code for the dialog
 from meshtoolsplugindialoggenerate import MeshToolsPluginDialogGenerate
 # Mesh Tools
-import Meshtools.meshtools as mt
+#from MeshToolsPlugin import Meshtools
 import os.path
+
+import meshtools as mt
 
 # Import the utilities from the fTools plugin (a standard QGIS plugin),
 # which provide convenience functions for handling QGIS vector layers
 import sys, os, imp
 import fTools
-import ftools_utils
 path = os.path.dirname(fTools.__file__)
 ftu = imp.load_source('ftools_utils', os.path.join(path,'tools','ftools_utils.py'))
-import ftools_utils
+
 
 import shapely.wkb
-
 
 class MeshToolsPlugin:
 
@@ -199,7 +199,7 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
 
 def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue,
                             triangleEdgeTypeAttribute, triangleEdgeTypeValue):
-    layer = ftools_utils.getVectorLayerByName(layerName)
+    layer = ftu.getVectorLayerByName(layerName)
     provider = layer.dataProvider()
     lengthAttributeID = provider.fieldNameIndex(triangleEdgeLengthAttribute)
     typeAttributeID = provider.fieldNameIndex(triangleEdgeTypeAttribute)

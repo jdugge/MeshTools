@@ -32,7 +32,7 @@ import sys, os, imp
 import fTools
 path = os.path.dirname(fTools.__file__)
 ftu = imp.load_source('ftu', os.path.join(path,'tools','ftools_utils.py'))
-import ftools_utils as ftu
+
 
 class MeshToolsPluginDialogGenerate(QtGui.QDialog):
     def __init__(self):
