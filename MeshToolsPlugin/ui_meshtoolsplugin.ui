@@ -448,7 +448,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="leOutputFileName"/>
+      <widget class="QLineEdit" name="leMeshName"/>
      </item>
     </layout>
    </item>

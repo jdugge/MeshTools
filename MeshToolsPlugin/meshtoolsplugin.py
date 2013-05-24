@@ -29,10 +29,11 @@ import resources_rc
 # Import the code for the dialog
 from meshtoolsplugindialoggenerate import MeshToolsPluginDialogGenerate
 # Mesh Tools
-#from MeshToolsPlugin import Meshtools
+import meshtools as mt
+
 import os.path
 
-import meshtools as mt
+
 
 # Import the utilities from the fTools plugin (a standard QGIS plugin),
 # which provide convenience functions for handling QGIS vector layers
@@ -151,13 +152,15 @@ def createMemoryMeshLayer(mesh, name="Mesh"):
         pr.addFeatures( [ fet ] )
     vl.updateExtents()
     QgsMapLayerRegistry.instance().addMapLayer(vl)
+    vl.mesh = mesh
+    del mesh
         
   
         
 def generateMesh(boundaryLayerName='', polygonLayerName='',
                  lineLayerName='', pointLayerName='',
                  triangleEdgeLengthValue=1, triangleEdgeLengthAttribute='',
-                 triangleEdgeTypeValue=1, triangleEdgeTypeAttribute=''):
+                 triangleEdgeTypeValue=1, triangleEdgeTypeAttribute='', meshName="Mesh"):
     # Process the polygon layer
     graph = mt.pslGraph()
     graph = addLayerFeaturesToGraph(boundaryLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
@@ -168,7 +171,7 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
     if pointLayerName != "":
         graph = addLayerFeaturesToGraph(pointLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
     mesh = mt.buildMesh(graph)
-    createMemoryMeshLayer(mesh, "Mesh2")
+    createMemoryMeshLayer(mesh, meshName)
 #    if self.dlg.ui.cbLines.currentText() != '':
 #        layer = emfhelpers.getLayerByName(self,self.dlg.ui.cbLines.currentText())
 #        provider = layer.dataProvider()

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_meshtoolsplugin.ui'
 #
-# Created: Thu May 23 15:02:03 2013
+# Created: Thu May 23 17:12:18 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -242,9 +242,9 @@ class Ui_MeshToolsPlugin(object):
         self.label_5 = QtGui.QLabel(MeshToolsPlugin)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.horizontalLayout_3.addWidget(self.label_5)
-        self.leOutputFileName = QtGui.QLineEdit(MeshToolsPlugin)
-        self.leOutputFileName.setObjectName(_fromUtf8("leOutputFileName"))
-        self.horizontalLayout_3.addWidget(self.leOutputFileName)
+        self.leMeshName = QtGui.QLineEdit(MeshToolsPlugin)
+        self.leMeshName.setObjectName(_fromUtf8("leMeshName"))
+        self.horizontalLayout_3.addWidget(self.leMeshName)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.widget = QtGui.QWidget(MeshToolsPlugin)
         self.widget.setObjectName(_fromUtf8("widget"))

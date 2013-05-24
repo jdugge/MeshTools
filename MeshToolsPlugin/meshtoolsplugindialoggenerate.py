@@ -104,10 +104,12 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         polygonLayerName = self.ui.cbPolygons.currentText()
         lineLayerName = self.ui.cbLines.currentText()
         pointLayerName = self.ui.cbPoints.currentText()
+        
         mtp.generateMesh(boundaryLayerName, polygonLayerName, lineLayerName, pointLayerName,
                           triangleEdgeLengthValue=edgeLengthValue,
                          triangleEdgeLengthAttribute=edgeLengthAttribute,
                          triangleEdgeTypeValue=edgeTypeValue,
-                         triangleEdgeTypeAttribute=edgeTypeAttribute)
+                         triangleEdgeTypeAttribute=edgeTypeAttribute,
+                         meshName=self.ui.leMeshName.text())
         
    
