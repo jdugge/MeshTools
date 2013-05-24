@@ -82,7 +82,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
     def generateMesh(self):
         boundaryLayerName = self.ui.cbBoundaryPolygons.currentText()
         if boundaryLayerName == "":
-            QtGui.QMessageBox.warning(self, 'EasyMesh Frontend',
+            QtGui.QMessageBox.warning(self, 'Mesh Tools',
                                 "Please select a polygon layer for the boundary of the meshing area")
             return
         

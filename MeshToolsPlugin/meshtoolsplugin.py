@@ -85,7 +85,7 @@ class MeshToolsPlugin:
         # Connect actions to functions
         self.actionGenerate.triggered.connect(self.runGenerate)
         self.actionAdd.triggered.connect(self.runAdd)
-        self.actionSave.triggered.connect(self.runGenerate)
+        self.actionSave.triggered.connect(self.runSave)
 
         # Add toolbar button and menu item
         self.iface.addToolBarIcon(self.actionGenerate)
@@ -136,7 +136,15 @@ class MeshToolsPlugin:
             self.createMemoryMeshLayer(mesh)
     
     def runSave(self, mesh):
-        pass
+        layer = self.iface.activeLayer()
+        if hasattr(layer, 'mesh'):
+            fileName = str(QFileDialog.getSaveFileName(self.dlgGenerate, 'Save mesh file', 
+                                                       "","GMS 2DM Mesh (*.2dm)"))
+            if fileName:
+                mt.writeMeshGMS(layer.mesh, fileName)
+        else:
+            QMessageBox.warning(self.dlgGenerate, 'Mesh Tools',
+                                "Selected layer is not a recognised mesh layer. Please select a different layer.")
     
 def createMemoryMeshLayer(mesh, name="Mesh"):
     vl = QgsVectorLayer("Polygon", name,  "memory")
@@ -172,33 +180,7 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
         graph = addLayerFeaturesToGraph(pointLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
     mesh = mt.buildMesh(graph)
     createMemoryMeshLayer(mesh, meshName)
-#    if self.dlg.ui.cbLines.currentText() != '':
-#        layer = emfhelpers.getLayerByName(self,self.dlg.ui.cbLines.currentText())
-#        provider = layer.dataProvider()
-#        lengthAttributeID = provider.fieldNameIndex(self.dlg.ui.cbLinesLength.currentText())
-#        typeAttributeID = provider.fieldNameIndex(self.dlg.ui.cbLinesMarker.currentText())
-#        provider.select([lengthAttributeID,typeAttributeID])
-#        feature = QgsFeature()
-#        while provider.nextFeature(feature):
-#            lengthAttribute = feature.attributeMap()[lengthAttributeID].toFloat()[0]
-#            typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]
-#            geometry = shapely.wkb.loads(feature.geometry().asWkb())
-#            graph.addEdges(emfhelpers.listAllEdges(geometry), lengthAttribute, typeAttribute)
-#    
-#    if self.dlg.ui.cbPoints.currentText() != '':
-#        layer = emfhelpers.getLayerByName(self,self.dlg.ui.cbPoints.currentText())
-#        provider = layer.dataProvider()
-#        lengthAttributeID = provider.fieldNameIndex(self.dlg.ui.cbPointsLength.currentText())
-#        typeAttributeID = provider.fieldNameIndex(self.dlg.ui.cbPointsMarker.currentText())
-#        provider.select([lengthAttributeID,typeAttributeID])
-#        feature = QgsFeature()
-#        while provider.nextFeature(feature):
-#            lengthAttribute = feature.attributeMap()[lengthAttributeID].toFloat()[0]
-#            typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]
-#            geometry = shapely.wkb.loads(feature.geometry().asWkb())
-#            graph.addEdges(emfhelpers.listAllEdges(geometry)) 
-
-# List all edges of a QGis feature
+    del mesh
 
 def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue,
                             triangleEdgeTypeAttribute, triangleEdgeTypeValue):

@@ -199,7 +199,7 @@ def readEasyMeshOutput(rootfilename):
             mesh.elements.markers[i] = int(line[12])
     return mesh
 
-# Export functions
+
 
 def readGridBuilderSlice(filename):
     mesh = triangleMesh()
@@ -227,6 +227,9 @@ def readGridBuilderSlice(filename):
     mesh.elements.markers = np.ones([nElements,1],dtype=int)
     f.close()
     return mesh
+
+
+# Export functions
 
 def writeMeshShapefile(mesh, fileName, crs=None):
         try:
