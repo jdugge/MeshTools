@@ -50,6 +50,8 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         self.ui.cbLines.currentIndexChanged.connect(self.populateAttributeComboBoxes)
         self.ui.cbPoints.currentIndexChanged.connect(self.populateAttributeComboBoxes)
         
+        self.ui.cbTriangleRefinementPoints.currentIndexChanged.connect(self.populateTriangleComboBox)
+        
         self.ui.cbPolygons.currentIndexChanged.emit(0)
         self.ui.pbGenerate.clicked.connect(self.generateMesh)
     
@@ -59,7 +61,11 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         
         for (combobox, geometryType) in [(self.ui.cbPolygons, qgis.QGis.Polygon),
                                          (self.ui.cbLines, qgis.QGis.Line),
-                                         (self.ui.cbPoints, qgis.QGis.Point)]:
+                                         (self.ui.cbPoints, qgis.QGis.Point),
+                                         (self.ui.cbTriangleBoundaryPolygons, qgis.QGis.Polygon),
+                                         (self.ui.cbTriangleBoundaryLines, qgis.QGis.Line),
+                                         (self.ui.cbTriangleBoundaryPoints, qgis.QGis.Point),
+                                         (self.ui.cbTriangleRefinementPoints, qgis.QGis.Point)]:
             combobox.clear()
             combobox.addItem('')
             combobox.addItems(ftu.getLayerNames([geometryType]))
@@ -79,37 +85,69 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         self.ui.cbLength.addItems(list(fieldNames))
         self.ui.cbType.addItems(list(fieldNames))
     
+    def populateTriangleComboBox(self):
+        self.ui.cbTriangleArea.clear()
+        fieldNames = set()
+        for combobox in [self.ui.cbTriangleRefinementPoints]:
+            if (combobox.currentText() != ""):
+                layer = ftu.getVectorLayerByName(combobox.currentText())
+                fieldNames.update(ftu.getFieldNames(layer))
+        self.ui.cbTriangleArea.addItems(list(fieldNames))
+    
     def generateMesh(self):
-        boundaryLayerName = self.ui.cbBoundaryPolygons.currentText()
-        if boundaryLayerName == "":
-            QtGui.QMessageBox.warning(self, 'Mesh Tools',
-                                "Please select a polygon layer for the boundary of the meshing area")
-            return
-        
-        # Default edge length value
-        edgeLengthValue = float(self.ui.leLength.text())
-        
-        # Default edge type value
-        edgeTypeValue = self.ui.sbType.value()
-        
-        if self.ui.chkbLengthFromLayer.isChecked():
-            edgeLengthAttribute = self.ui.cbLength.currentText()
+        if self.ui.cbAlgorithm.currentText() == "EasyMesh":
+            boundaryLayerName = self.ui.cbBoundaryPolygons.currentText()
+            if boundaryLayerName == "":
+                QtGui.QMessageBox.warning(self, 'Mesh Tools',
+                                    "Please select a polygon layer for the boundary of the meshing area")
+                return
+            
+            # Default edge length value
+            edgeLengthValue = float(self.ui.leLength.text())
+            
+            # Default edge type value
+            edgeTypeValue = self.ui.sbType.value()
+            
+            if self.ui.chkbLengthFromLayer.isChecked():
+                edgeLengthAttribute = self.ui.cbLength.currentText()
+            else:
+                edgeLengthAttribute = ""
+            
+            if self.ui.chkbTypeFromLayer.isChecked():
+                edgeTypeAttribute = self.ui.cbType.currentText()
+            else:
+                edgeTypeAttribute = ""
+            polygonLayerName = self.ui.cbPolygons.currentText()
+            lineLayerName = self.ui.cbLines.currentText()
+            pointLayerName = self.ui.cbPoints.currentText()
+            
+            mtp.generateMesh(boundaryLayerName, polygonLayerName, lineLayerName, pointLayerName,
+                              triangleEdgeLengthValue=edgeLengthValue,
+                             triangleEdgeLengthAttribute=edgeLengthAttribute,
+                             triangleEdgeTypeValue=edgeTypeValue,
+                             triangleEdgeTypeAttribute=edgeTypeAttribute,
+                             meshName=self.ui.leMeshName.text())
         else:
-            edgeLengthAttribute = ""
-        
-        if self.ui.chkbTypeFromLayer.isChecked():
-            edgeTypeAttribute = self.ui.cbType.currentText()
-        else:
-            edgeTypeAttribute = ""
-        polygonLayerName = self.ui.cbPolygons.currentText()
-        lineLayerName = self.ui.cbLines.currentText()
-        pointLayerName = self.ui.cbPoints.currentText()
-        
-        mtp.generateMesh(boundaryLayerName, polygonLayerName, lineLayerName, pointLayerName,
-                          triangleEdgeLengthValue=edgeLengthValue,
-                         triangleEdgeLengthAttribute=edgeLengthAttribute,
-                         triangleEdgeTypeValue=edgeTypeValue,
-                         triangleEdgeTypeAttribute=edgeTypeAttribute,
-                         meshName=self.ui.leMeshName.text())
-        
-   
+            boundaryLayerName = self.ui.cbTriangleBoundaryPolygons.currentText()
+            if boundaryLayerName == "":
+                QtGui.QMessageBox.warning(self, 'Mesh Tools',
+                                    "Please select a polygon layer for the boundary of the meshing area")
+                return
+            lineLayerName = self.ui.cbTriangleBoundaryLines.currentText()
+            pointLayerName = self.ui.cbTriangleBoundaryPoints.currentText()
+            if self.ui.cbTriangleAngle.isChecked():
+                triangleAngle = self.ui.sbTriangleAngle.value()
+            else:
+                triangleAngle = 30
+            if self.ui.leTriangleArea.text() != "":
+                triangleArea=float(self.ui.leTriangleArea.text())
+            else:
+                triangleArea=""
+            mtp.generateMesh(boundaryLayerName,lineLayerName=lineLayerName,
+                             pointLayerName=pointLayerName,
+                             meshName=self.ui.leMeshName.text(),
+                             algorithm="Triangle", triangleAngle=triangleAngle,
+                             triangleArea=triangleArea,
+                             regionLayerName=self.ui.cbTriangleRefinementPoints.currentText(),
+                             regionAttributeName=self.ui.cbTriangleArea.currentText())
+

@@ -16,6 +16,10 @@ import qgis.core as qgis
 import PyQt4.QtCore as pyqt
 
 
+from qgis.core import *
+log = lambda m: QgsMessageLog.logMessage(m,'My Plugin') 
+
+
 class pslGraph():
     '''Planar Straight Line Graph that is used to define the geometry
     for generating meshes'''
@@ -24,6 +28,7 @@ class pslGraph():
         self.lengthAttributes = []
         self.typeAttributes = []
         self.edges = []
+        self.regions = [] # Used by Triangle algorithm to specify maximum triangle areas
     def __iter__(self):
         return self
     def next(self):
@@ -123,7 +128,7 @@ class meshElements():
             self.curIndex=0
             raise StopIteration
 
-def buildMesh(geometry, algorithm="EasyMesh"):
+def buildMesh(geometry, algorithm="EasyMesh", triangleAngle=0, triangleArea=0):
     if algorithm=="EasyMesh":
         tempFileFD, tempFileName = tempfile.mkstemp(suffix=".d", text=True)
         tempFileBaseName, tempFileExtension = os.path.splitext(tempFileName)
@@ -132,10 +137,23 @@ def buildMesh(geometry, algorithm="EasyMesh"):
         mesh = readEasyMeshOutput(tempFileBaseName)
         return mesh
     elif algorithm=="Triangle":
-        import triangle as tri
-        geomDict = {'nodes':geometry.nodesList(), 'segments':geometry.asNodeIndices()}
-        triMesh = tri.triangulate(geomDict)
-        return
+        import meshpy.triangle as tri
+        info = tri.MeshInfo()
+        info.set_points(geometry.nodesList())
+        info.set_facets(geometry.asNodeIndices())
+        info.regions.resize(len(geometry.regions))
+        for i,region in enumerate(geometry.regions):
+            info.regions[i] = list(region)
+        log(str(info.regions[0]))
+        triMesh = tri.build(info,min_angle=triangleAngle, attributes=True,
+                            volume_constraints=True)
+        mesh = triangleMesh()
+        mesh.nodes.coordinates = np.array(triMesh.points)
+        mesh.nodes.numbers = range(len(mesh.nodes.coordinates))
+        mesh.elements.nodes = np.array(triMesh.elements)
+        mesh.elements.numbers = range(len(mesh.elements.nodes))
+        mesh.elements.markers = [1]*len(mesh.elements.nodes)
+        return mesh
 
     
 def writeEasyMeshInput(geometry, filename):

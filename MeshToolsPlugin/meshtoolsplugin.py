@@ -168,7 +168,9 @@ def createMemoryMeshLayer(mesh, name="Mesh"):
 def generateMesh(boundaryLayerName='', polygonLayerName='',
                  lineLayerName='', pointLayerName='',
                  triangleEdgeLengthValue=1, triangleEdgeLengthAttribute='',
-                 triangleEdgeTypeValue=1, triangleEdgeTypeAttribute='', meshName="Mesh"):
+                 triangleEdgeTypeValue=1, triangleEdgeTypeAttribute='', meshName="Mesh",
+                 algorithm="EasyMesh", triangleAngle=0, triangleArea=0,
+                 regionLayerName="",regionAttributeName=""):
     # Process the polygon layer
     graph = mt.pslGraph()
     graph = addLayerFeaturesToGraph(boundaryLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
@@ -178,7 +180,19 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
         graph = addLayerFeaturesToGraph(lineLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
     if pointLayerName != "":
         graph = addLayerFeaturesToGraph(pointLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
-    mesh = mt.buildMesh(graph)
+    if algorithm=="EasyMesh":
+        mesh = mt.buildMesh(graph, "EasyMesh")
+    if algorithm=="Triangle":
+        # Define regions
+        if regionLayerName != "":
+            regionCoords,regionValues = listLayerPointsWithAttribute(regionLayerName,
+                                                                 regionAttributeName)
+            graph.regions = zip([comp[0] for comp in regionCoords],
+                                [comp[1] for comp in regionCoords],
+                                [1]*len(regionCoords),
+                                regionValues)
+        mesh = mt.buildMesh(graph, "Triangle", triangleAngle=triangleAngle,
+                            triangleArea=triangleArea)
     createMemoryMeshLayer(mesh, meshName)
     del mesh
 
@@ -226,3 +240,20 @@ def listAllEdges(object):
         for geom in object.geoms:
             edges.extend(listAllEdges(geom))
     return edges
+
+def listLayerPointsWithAttribute(layerName, attribute, defaultValue=100):
+    layer = ftu.getVectorLayerByName(layerName)
+    provider = layer.dataProvider()
+    attributeID = provider.fieldNameIndex(attribute)
+    provider.select([attributeID])
+    feature = QgsFeature()
+    coordinates = list()
+    attributeValues = list()
+    while provider.nextFeature(feature):
+        if attributeID != -1:
+            attributeValue = feature.attributeMap()[attributeID].toFloat()[0]
+        else:
+            attributeValue = defaultValue
+        coordinates.append(tuple(feature.geometry().asPoint()))
+        attributeValues.append(attributeValue)
+    return (coordinates, attributeValues)

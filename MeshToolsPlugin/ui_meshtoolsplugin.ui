@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>376</width>
-    <height>565</height>
+    <height>591</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
       <enum>QFrame::Plain</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pageEasyMesh">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -301,8 +301,134 @@
       </layout>
      </widget>
      <widget class="QWidget" name="pageTriangle">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_12">
+       <item row="4" column="0" rowspan="2" colspan="3">
+        <widget class="QWidget" name="wArea" native="true">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0" colspan="2">
+           <widget class="QGroupBox" name="groupBox_7">
+            <property name="title">
+             <string>Maximum triangle area</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_13">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="leTriangleArea"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>Default value</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="chkbAreaFromLayer">
+               <property name="text">
+                <string>Use value from layer property</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="cbTriangleArea">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0" rowspan="2" colspan="3">
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Domain boundary / breaklines layer</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Polygons</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cbTriangleBoundaryPolygons">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="pbTriangleNewPolygons">
+            <property name="text">
+             <string>New...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Lines</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="cbTriangleBoundaryLines">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="pbTriangleNewLines">
+            <property name="text">
+             <string>New...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Points</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="cbTriangleBoundaryPoints">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="pbTriangleNewPoints">
+            <property name="text">
+             <string>New...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="3">
         <widget class="QWidget" name="wAngle" native="true">
          <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
           <property name="leftMargin">
@@ -312,7 +438,7 @@
            <number>0</number>
           </property>
           <item row="0" column="0">
-           <widget class="QCheckBox" name="cbAngle">
+           <widget class="QCheckBox" name="cbTriangleAngle">
             <property name="text">
              <string>Minimum corner angle</string>
             </property>
@@ -322,7 +448,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="sbAngle">
+           <widget class="QDoubleSpinBox" name="sbTriangleAngle">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>1</horstretch>
@@ -361,47 +487,40 @@
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="QWidget" name="wArea" native="true">
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="rbAreaFixed">
+       <item row="2" column="0" colspan="3">
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Refinement layer</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_10">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_18">
             <property name="text">
-             <string>Fixed value</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
+             <string>Points</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="leArea"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="rbAreaFromLayer">
+          <item row="0" column="2">
+           <widget class="QPushButton" name="pbTriangleRefinementNewPoints">
             <property name="text">
-             <string>From layer property</string>
+             <string>New...</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Minimum triangle area</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="cbArea">
-            <property name="enabled">
-             <bool>false</bool>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cbTriangleRefinementPoints">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="6" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -556,38 +675,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>rbAreaFixed</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>leArea</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>109</x>
-     <y>258</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>236</x>
-     <y>259</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rbAreaFromLayer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>cbArea</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>109</x>
-     <y>291</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>236</x>
-     <y>292</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>chkbLengthFromLayer</sender>
    <signal>toggled(bool)</signal>
    <receiver>cbLength</receiver>
@@ -616,6 +703,22 @@
     <hint type="destinationlabel">
      <x>307</x>
      <y>433</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkbAreaFromLayer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbTriangleArea</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>149</x>
+     <y>396</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>397</y>
     </hint>
    </hints>
   </connection>
