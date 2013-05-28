@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>376</width>
-    <height>591</height>
+    <width>385</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -302,7 +302,7 @@
      </widget>
      <widget class="QWidget" name="pageTriangle">
       <layout class="QGridLayout" name="gridLayout_12">
-       <item row="4" column="0" rowspan="2" colspan="3">
+       <item row="3" column="0" rowspan="2" colspan="3">
         <widget class="QWidget" name="wArea" native="true">
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0" colspan="2">
@@ -317,27 +317,66 @@
              <property name="rightMargin">
               <number>0</number>
              </property>
-             <item row="0" column="1">
+             <item row="2" column="2">
+              <widget class="QComboBox" name="cbTriangleRefinementPoints">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QPushButton" name="pbTriangleRefinementNewPoints">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>New...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2" colspan="2">
               <widget class="QLineEdit" name="leTriangleArea"/>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_16">
-               <property name="text">
-                <string>Default value</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QCheckBox" name="chkbAreaFromLayer">
-               <property name="text">
-                <string>Use value from layer property</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
+             <item row="4" column="2">
               <widget class="QComboBox" name="cbTriangleArea">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QRadioButton" name="radioButton">
+               <property name="text">
+                <string>Default value</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QRadioButton" name="radioButton_2">
+               <property name="text">
+                <string>From points layer</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Attribute</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -428,7 +467,7 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0" colspan="3">
+       <item row="2" column="0" colspan="3">
         <widget class="QWidget" name="wAngle" native="true">
          <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
           <property name="leftMargin">
@@ -487,40 +526,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="3">
-        <widget class="QGroupBox" name="groupBox_6">
-         <property name="title">
-          <string>Refinement layer</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_10">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_18">
-            <property name="text">
-             <string>Points</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pbTriangleRefinementNewPoints">
-            <property name="text">
-             <string>New...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cbTriangleRefinementPoints">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="6" column="1">
+       <item row="5" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -703,22 +709,6 @@
     <hint type="destinationlabel">
      <x>307</x>
      <y>433</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkbAreaFromLayer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>cbTriangleArea</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>149</x>
-     <y>396</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>309</x>
-     <y>397</y>
     </hint>
    </hints>
   </connection>

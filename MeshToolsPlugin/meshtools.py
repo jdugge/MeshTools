@@ -275,6 +275,29 @@ def writeMeshShapefile(mesh, fileName, crs=None):
             fet.addAttribute(2, pyqt.QVariant(1))
             writer.addFeature(fet)
 
+def writeFractureShapefile(fractures, fileName, crs=None):
+        try:
+            os.remove(fileName)
+        except OSError:
+            pass
+        fields = { 0 : qgis.QgsField("ID", pyqt.QVariant.Int),
+                  1 : qgis.QgsField("Aperture", pyqt.QVariant.Double)
+                  }
+        writer = qgis.QgsVectorFileWriter(fileName, "utf-8", fields, qgis.QGis.WKBLineString, crs, "ESRI Shapefile")
+        if writer.hasError() != qgis.QgsVectorFileWriter.NoError:
+            print "Error when creating shapefile: ", writer.hasError()
+        for index, fracture in enumerate(fractures):
+            feat = qgis.QgsFeature()
+            feat.setGeometry(qgis.QgsGeometry.fromPolyline([
+                    qgis.QgsPoint(fracture[0],fracture[1]),
+                    qgis.QgsPoint(fracture[2],fracture[3])
+                            ] )
+                )
+           # feat.addAttribute(0, pyqt.QVariant(index))
+           # feat.addAttribute(1, pyqt.QVariant(1))
+           # feat.addAttribute(2, pyqt.QVariant(1))
+            writer.addFeature(feat)
+
 # delete the writer to flush features to disk (optional)
         del writer
 

@@ -17,3 +17,6 @@ Line(7) = {2, 5};
 Line(8) = {1, 3};
 Line Loop(9) = {6, 1, 2, 3, 4, 5};
 Plane Surface(10) = {9};
+Point{1, 3, 5, 2} In Surface{10};
+Point{1, 5, 3} In Surface{10};
+Point{1, 5, 3} In Surface{10};
