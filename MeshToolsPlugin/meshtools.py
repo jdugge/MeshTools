@@ -72,6 +72,17 @@ class pslGraph():
                 pass
         return types
 
+def checkPolygonOrientation(polygons):
+    '''Takes a numpy matrix of type
+    [[[x_a1, y_a1],
+      [x_a2, y_a2],
+      [x_a3, y_a3]],
+     [[x_b1, y_b1],
+      [x_b2, y_b2],
+      [x_b3, y_b3]],
+      ...]]] and returns a vector of the orientations (1=ccw, -1=cw)'''
+    return np.sign(np.sum(np.cross(polygons,np.roll(polygons,-1,1)),1))
+
 class triangleMesh():
     '''Unstructured triangular mesh.
     Consists of mesh nodes and triangular mesh elements'''
@@ -178,7 +189,7 @@ def writeEasyMeshInput(geometry, filename):
 
 def runEasyMesh(filename):
     rootfilename = os.path.join(os.path.dirname(filename),os.path.splitext(os.path.basename(filename))[0])
-    subprocess.call(["EasyMesh", filename,"+dxf"])
+    subprocess.call(["Easy", filename,"+a","3"])
     mesh = readEasyMeshOutput(rootfilename)
     return mesh
     
@@ -303,7 +314,7 @@ def writeFractureShapefile(fractures, fileName, crs=None):
 
 def writeMeshGMS(mesh, filename):
     VerticesString = [' '.join( ['ND', str(index+1), ' '.join(map(str, node))] ) for index,node in enumerate(mesh.nodes.coordinates)]
-    TrianglesString = [' '.join( ['E3T', str(index+1), ' '.join(map(str, triangle)), '0'] ) for index,triangle in enumerate(mesh.elements.nodes+1)]
+    TrianglesString = [' '.join( ['E3T', str(index+1), ' '.join(map(str, triangle)), '1'] ) for index,triangle in enumerate(mesh.elements.nodes+1)]
     
     with open(filename,'w') as f:
         f.write('MESH2D\n')
