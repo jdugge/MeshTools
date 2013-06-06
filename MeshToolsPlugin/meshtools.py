@@ -155,9 +155,13 @@ def buildMesh(geometry, algorithm="EasyMesh", triangleAngle=0, triangleArea=0):
         info.regions.resize(len(geometry.regions))
         for i,region in enumerate(geometry.regions):
             info.regions[i] = list(region)
-        log(str(info.regions[0]))
-        triMesh = tri.build(info,min_angle=triangleAngle, attributes=True,
-                            volume_constraints=True)
+        if len(info.regions)>0:
+            volConstraints=True
+            triangleArea=0
+        else:
+            volConstraints=False
+        triMesh = tri.build(info,min_angle=triangleAngle, max_volume=triangleArea, attributes=True,
+                            volume_constraints=volConstraints)
         mesh = triangleMesh()
         mesh.nodes.coordinates = np.array(triMesh.points)
         mesh.nodes.numbers = range(len(mesh.nodes.coordinates))

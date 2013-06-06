@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_meshtoolsplugin.ui'
 #
-# Created: Mon May 27 19:53:30 2013
+# Created: Thu Jun  6 16:33:40 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -187,6 +187,7 @@ class Ui_MeshToolsPlugin(object):
         self.gridLayout_13.setContentsMargins(0, -1, 0, -1)
         self.gridLayout_13.setObjectName(_fromUtf8("gridLayout_13"))
         self.cbTriangleRefinementPoints = QtGui.QComboBox(self.groupBox_7)
+        self.cbTriangleRefinementPoints.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
@@ -195,6 +196,7 @@ class Ui_MeshToolsPlugin(object):
         self.cbTriangleRefinementPoints.setObjectName(_fromUtf8("cbTriangleRefinementPoints"))
         self.gridLayout_13.addWidget(self.cbTriangleRefinementPoints, 2, 2, 1, 1)
         self.pbTriangleRefinementNewPoints = QtGui.QPushButton(self.groupBox_7)
+        self.pbTriangleRefinementNewPoints.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -209,18 +211,19 @@ class Ui_MeshToolsPlugin(object):
         self.cbTriangleArea.setEnabled(False)
         self.cbTriangleArea.setObjectName(_fromUtf8("cbTriangleArea"))
         self.gridLayout_13.addWidget(self.cbTriangleArea, 4, 2, 1, 1)
-        self.radioButton = QtGui.QRadioButton(self.groupBox_7)
-        self.radioButton.setChecked(True)
-        self.radioButton.setObjectName(_fromUtf8("radioButton"))
-        self.gridLayout_13.addWidget(self.radioButton, 0, 0, 1, 1)
-        self.radioButton_2 = QtGui.QRadioButton(self.groupBox_7)
-        self.radioButton_2.setChecked(False)
-        self.radioButton_2.setObjectName(_fromUtf8("radioButton_2"))
-        self.gridLayout_13.addWidget(self.radioButton_2, 2, 0, 1, 1)
-        self.label_7 = QtGui.QLabel(self.groupBox_7)
-        self.label_7.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_7.setObjectName(_fromUtf8("label_7"))
-        self.gridLayout_13.addWidget(self.label_7, 4, 0, 1, 1)
+        self.rbTriangleAreaDefault = QtGui.QRadioButton(self.groupBox_7)
+        self.rbTriangleAreaDefault.setChecked(True)
+        self.rbTriangleAreaDefault.setObjectName(_fromUtf8("rbTriangleAreaDefault"))
+        self.gridLayout_13.addWidget(self.rbTriangleAreaDefault, 0, 0, 1, 1)
+        self.rbTriangleAreaFromLayer = QtGui.QRadioButton(self.groupBox_7)
+        self.rbTriangleAreaFromLayer.setChecked(False)
+        self.rbTriangleAreaFromLayer.setObjectName(_fromUtf8("rbTriangleAreaFromLayer"))
+        self.gridLayout_13.addWidget(self.rbTriangleAreaFromLayer, 2, 0, 1, 1)
+        self.labelTriangleAreaAttribute = QtGui.QLabel(self.groupBox_7)
+        self.labelTriangleAreaAttribute.setEnabled(False)
+        self.labelTriangleAreaAttribute.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.labelTriangleAreaAttribute.setObjectName(_fromUtf8("labelTriangleAreaAttribute"))
+        self.gridLayout_13.addWidget(self.labelTriangleAreaAttribute, 4, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBox_7, 0, 0, 1, 2)
         self.gridLayout_12.addWidget(self.wArea, 3, 0, 2, 3)
         self.groupBox_5 = QtGui.QGroupBox(self.pageTriangle)
@@ -343,6 +346,10 @@ class Ui_MeshToolsPlugin(object):
         QtCore.QObject.connect(self.cbAlgorithm, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), self.swAlgorithmControls.setCurrentIndex)
         QtCore.QObject.connect(self.chkbLengthFromLayer, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.cbLength.setEnabled)
         QtCore.QObject.connect(self.chkbTypeFromLayer, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.cbType.setEnabled)
+        QtCore.QObject.connect(self.rbTriangleAreaFromLayer, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.cbTriangleRefinementPoints.setEnabled)
+        QtCore.QObject.connect(self.rbTriangleAreaFromLayer, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.pbTriangleRefinementNewPoints.setEnabled)
+        QtCore.QObject.connect(self.rbTriangleAreaFromLayer, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.cbTriangleArea.setEnabled)
+        QtCore.QObject.connect(self.rbTriangleAreaDefault, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.labelTriangleAreaAttribute.setDisabled)
         QtCore.QMetaObject.connectSlotsByName(MeshToolsPlugin)
 
     def retranslateUi(self, MeshToolsPlugin):
@@ -367,9 +374,10 @@ class Ui_MeshToolsPlugin(object):
         self.chkbTypeFromLayer.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Use type from layer property", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_7.setTitle(QtGui.QApplication.translate("MeshToolsPlugin", "Maximum triangle area", None, QtGui.QApplication.UnicodeUTF8))
         self.pbTriangleRefinementNewPoints.setText(QtGui.QApplication.translate("MeshToolsPlugin", "New...", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Default value", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_2.setText(QtGui.QApplication.translate("MeshToolsPlugin", "From points layer", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Attribute", None, QtGui.QApplication.UnicodeUTF8))
+        self.leTriangleArea.setText(QtGui.QApplication.translate("MeshToolsPlugin", "1.0", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbTriangleAreaDefault.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Default value", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbTriangleAreaFromLayer.setText(QtGui.QApplication.translate("MeshToolsPlugin", "From points layer", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelTriangleAreaAttribute.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Attribute", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_5.setTitle(QtGui.QApplication.translate("MeshToolsPlugin", "Domain boundary / breaklines layer", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Polygons", None, QtGui.QApplication.UnicodeUTF8))
         self.pbTriangleNewPolygons.setText(QtGui.QApplication.translate("MeshToolsPlugin", "New...", None, QtGui.QApplication.UnicodeUTF8))

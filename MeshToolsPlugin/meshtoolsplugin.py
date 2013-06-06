@@ -81,6 +81,7 @@ class MeshToolsPlugin:
         self.actionSave = QAction(
             QIcon(":/plugins/meshtoolsplugin/icon_savemesh.svg"),
             u"Save Mesh", self.iface.mainWindow())
+
         
         # Connect actions to functions
         self.actionGenerate.triggered.connect(self.runGenerate)
@@ -145,6 +146,8 @@ class MeshToolsPlugin:
         else:
             QMessageBox.warning(self.dlgGenerate, 'Mesh Tools',
                                 "Selected layer is not a recognised mesh layer. Please select a different layer.")
+
+  
     
 def createMemoryMeshLayer(mesh, name="Mesh"):
     vl = QgsVectorLayer("Polygon", name,  "memory")
@@ -232,7 +235,7 @@ def listAllEdges(object):
         coords = list(object.coords)
         edges.extend(zip(coords[:-1],coords[1:]))
     if type == 'Polygon':
-        object = shapely.geometry.polygon.orient(object)
+        #object = shapely.geometry.polygon.orient(object)
         edges.extend(listAllEdges(object.exterior))
         for interior in object.interiors:
             edges.extend(listAllEdges(interior))

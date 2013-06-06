@@ -28,7 +28,7 @@ import meshtoolsplugin as mtp
 
 # Import the utilities from the fTools plugin (a standard QGIS plugin),
 # which provide convenience functions for handling QGIS vector layers
-import sys, os, imp
+import sys, os, imp, platform
 import fTools
 path = os.path.dirname(fTools.__file__)
 ftu = imp.load_source('ftu', os.path.join(path,'tools','ftools_utils.py'))
@@ -41,6 +41,9 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         self.ui = Ui_MeshToolsPlugin()
         self.ui.setupUi(self)
         self.ui.cbAlgorithm.addItems(['EasyMesh','Triangle'])
+        self.ui.cbAlgorithm.setCurrentIndex(1)
+        if (platform.system()=='Windows'):
+            self.ui.cbAlgorithm.setEnabled(False)
         #self.ui.cbPolygons.currentIndexChanged.connect(
         #    lambda: mtp.setAttributeComboBox(self, self.ui.cbLength))
         
@@ -54,21 +57,27 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         
         self.ui.cbPolygons.currentIndexChanged.emit(0)
         self.ui.pbGenerate.clicked.connect(self.generateMesh)
+        self.ui.pbTriangleNewPoints.clicked.connect(
+            lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbPolygons))
     
     def populateLayerComboBoxes(self):
+        # Boundary polygons are always needed, so don't include an empty entry in those comboBoxes
         self.ui.cbBoundaryPolygons.clear()
         self.ui.cbBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
+        self.ui.cbTriangleBoundaryPolygons.clear()
+        self.ui.cbTriangleBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
+        
         
         for (combobox, geometryType) in [(self.ui.cbPolygons, qgis.QGis.Polygon),
                                          (self.ui.cbLines, qgis.QGis.Line),
                                          (self.ui.cbPoints, qgis.QGis.Point),
-                                         (self.ui.cbTriangleBoundaryPolygons, qgis.QGis.Polygon),
                                          (self.ui.cbTriangleBoundaryLines, qgis.QGis.Line),
                                          (self.ui.cbTriangleBoundaryPoints, qgis.QGis.Point),
                                          (self.ui.cbTriangleRefinementPoints, qgis.QGis.Point)]:
             combobox.clear()
             combobox.addItem('')
             combobox.addItems(ftu.getLayerNames([geometryType]))
+            
         #mtp.populateComboBox(self.ui.cbPolygons, [qgis.QGis.WKBPolygon], allowRaster=False)
         #self.ui.cbLength.addItems(["Length","Type"])
     
@@ -93,6 +102,38 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                 layer = ftu.getVectorLayerByName(combobox.currentText())
                 fieldNames.update(ftu.getFieldNames(layer))
         self.ui.cbTriangleArea.addItems(list(fieldNames))
+
+    def createNewLayer(self, geometryType, comboBox):
+        fname = QtGui.QFileDialog.getSaveFileName(self, 'Open file', 
+                                        "", "Shapefile (*.shp);;All files (*)")
+        layername = os.path.splitext(os.path.basename(str(fname)))[0]
+        self.createShapefile(fname, geometryType)
+        vlayer = QgsVectorLayer(fname, layername, "ogr")
+        QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+        comboBox.addItem(layername)
+        comboBox.setCurrentIndex(comboBox.count()-1)
+        self.iface.actionToggleEditing().trigger()
+        self.iface.actionAddFeature().trigger()
+        self.iface.actionToggleEditing().triggered.connect(self.showDialogAndDisconnect)
+        self.hide()
+
+    def showDialogAndDisconnect(self):
+        self.dlg.show()
+        self.iface.actionToggleEditing().triggered.disconnect(self.showDialogAndDisconnect)
+        
+    def createShapefile(self, fname, geometryType):
+        if fname != "":
+            try:
+                os.remove(fname)
+            except OSError:
+                 pass
+            crs = iface.mapCanvas().mapRenderer().destinationCrs()
+            fields = { 0 : QgsField("Length", QVariant.Double),
+                      1 : QgsField("Type", QVariant.Int) }
+            writer = QgsVectorFileWriter(fname, "CP1250", fields, geometryType, crs, "ESRI Shapefile")
+            if writer.hasError() != QgsVectorFileWriter.NoError:
+                print "Error when creating shapefile: ", writer.hasError()
+            del writer
     
     def generateMesh(self):
         if self.ui.cbAlgorithm.currentText() == "EasyMesh":
