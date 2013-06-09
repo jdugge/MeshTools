@@ -81,6 +81,7 @@ def checkPolygonOrientation(polygons):
       [x_b2, y_b2],
       [x_b3, y_b3]],
       ...]]] and returns a vector of the orientations (1=ccw, -1=cw)'''
+    polygons = np.array([polygons])
     return np.sign(np.sum(np.cross(polygons,np.roll(polygons,-1,1)),1))
 
 class triangleMesh():

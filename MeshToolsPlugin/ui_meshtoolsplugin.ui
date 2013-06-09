@@ -51,7 +51,7 @@
       <enum>QFrame::Plain</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pageEasyMesh">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -170,7 +170,7 @@
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QPushButton" name="pbNewPolygons_2">
+              <widget class="QPushButton" name="pbNewBoundaryPolygons">
                <property name="text">
                 <string>New...</string>
                </property>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_meshtoolsplugin.ui'
 #
-# Created: Thu Jun  6 16:33:40 2013
+# Created: Sun Jun  9 18:32:04 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -108,9 +108,9 @@ class Ui_MeshToolsPlugin(object):
         self.cbBoundaryPolygons.setSizePolicy(sizePolicy)
         self.cbBoundaryPolygons.setObjectName(_fromUtf8("cbBoundaryPolygons"))
         self.gridLayout.addWidget(self.cbBoundaryPolygons, 0, 1, 1, 1)
-        self.pbNewPolygons_2 = QtGui.QPushButton(self.groupBox_2)
-        self.pbNewPolygons_2.setObjectName(_fromUtf8("pbNewPolygons_2"))
-        self.gridLayout.addWidget(self.pbNewPolygons_2, 0, 2, 1, 1)
+        self.pbNewBoundaryPolygons = QtGui.QPushButton(self.groupBox_2)
+        self.pbNewBoundaryPolygons.setObjectName(_fromUtf8("pbNewBoundaryPolygons"))
+        self.gridLayout.addWidget(self.pbNewBoundaryPolygons, 0, 2, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_2, 0, 0, 1, 2)
         self.groupBox_3 = QtGui.QGroupBox(self.wEdgeLength)
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
@@ -340,7 +340,7 @@ class Ui_MeshToolsPlugin(object):
         self.verticalLayout.addWidget(self.widget)
 
         self.retranslateUi(MeshToolsPlugin)
-        self.swAlgorithmControls.setCurrentIndex(1)
+        self.swAlgorithmControls.setCurrentIndex(0)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), MeshToolsPlugin.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), MeshToolsPlugin.reject)
         QtCore.QObject.connect(self.cbAlgorithm, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), self.swAlgorithmControls.setCurrentIndex)
@@ -364,7 +364,7 @@ class Ui_MeshToolsPlugin(object):
         self.pbNewPoints.setText(QtGui.QApplication.translate("MeshToolsPlugin", "New...", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("MeshToolsPlugin", "Domain boundary layer", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Polygons", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbNewPolygons_2.setText(QtGui.QApplication.translate("MeshToolsPlugin", "New...", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbNewBoundaryPolygons.setText(QtGui.QApplication.translate("MeshToolsPlugin", "New...", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("MeshToolsPlugin", "Triangle edge length", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("MeshToolsPlugin", "Default value in map units", None, QtGui.QApplication.UnicodeUTF8))
         self.leLength.setText(QtGui.QApplication.translate("MeshToolsPlugin", "1.0", None, QtGui.QApplication.UnicodeUTF8))

@@ -72,7 +72,23 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         self.ui.pbTriangleRefinementNewPoints.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBPoint, self.ui.cbTriangleRefinementPoints,
                                         { 0 : qgis.QgsField("Element Area", QtCore.QVariant.Double)}))
-    
+        self.ui.pbNewPolygons.clicked.connect(
+            lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbBoundaryPolygons,
+                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
+        self.ui.pbNewLines.clicked.connect(
+            lambda: self.createNewLayer(qgis.QGis.WKBLineString, self.ui.cbLines,
+                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
+        self.ui.pbNewPoints.clicked.connect(
+            lambda: self.createNewLayer(qgis.QGis.WKBPoint, self.ui.cbPoints,
+                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
+        self.ui.pbNewBoundaryPolygons.clicked.connect(
+            lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbPolygons,
+                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
+        
          
     def populateLayerComboBoxes(self):
         # Boundary polygons are always needed, so don't include an empty entry in those comboBoxes
@@ -124,6 +140,8 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                                         "", "Shapefile (*.shp);;All files (*)")
         fname = os.path.splitext(str(fname))[0]+'.shp'
         layername = os.path.splitext(os.path.basename(str(fname)))[0]
+        if (layername=='.shp'):
+            return
         self.createShapefile(fname, geometryType, fields)
         vlayer = qgis.QgsVectorLayer(fname, layername, "ogr")
         qgis.QgsMapLayerRegistry.instance().addMapLayer(vlayer)

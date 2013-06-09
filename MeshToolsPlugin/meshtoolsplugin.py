@@ -247,7 +247,9 @@ def listAllEdges(object):
         coords = list(object.coords)
         edges.extend(zip(coords[:-1],coords[1:]))
     if type == 'Polygon':
-        #object = shapely.geometry.polygon.orient(object)
+        object = shapely.geometry.polygon.orient(object)
+        if mt.checkPolygonOrientation(object.exterior.coords):
+            object.exterior.coords=object.exterior.coords[::-1]
         edges.extend(listAllEdges(object.exterior))
         for interior in object.interiors:
             edges.extend(listAllEdges(interior))
