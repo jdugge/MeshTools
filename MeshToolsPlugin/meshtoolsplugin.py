@@ -67,7 +67,7 @@ class MeshToolsPlugin:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlgGenerate = MeshToolsPluginDialogGenerate()
+        self.dlgGenerate = MeshToolsPluginDialogGenerate(self.iface)
         
 
     def initGui(self):
@@ -147,7 +147,19 @@ class MeshToolsPlugin:
             QMessageBox.warning(self.dlgGenerate, 'Mesh Tools',
                                 "Selected layer is not a recognised mesh layer. Please select a different layer.")
 
-  
+    def createShapefile(self, fname, geometryType):
+        if fname != "":
+            try:
+                os.remove(fname)
+            except OSError:
+                 pass
+            crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+            fields = { 0 : QgsField("Length", QVariant.Double),
+                      1 : QgsField("Type", QVariant.Int) }
+            writer = QgsVectorFileWriter(fname, "CP1250", fields, geometryType, crs, "ESRI Shapefile")
+            if writer.hasError() != QgsVectorFileWriter.NoError:
+                print "Error when creating shapefile: ", writer.hasError()
+            del writer
     
 def createMemoryMeshLayer(mesh, name="Mesh"):
     vl = QgsVectorLayer("Polygon", name,  "memory")
