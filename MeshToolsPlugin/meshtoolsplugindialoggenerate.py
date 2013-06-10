@@ -73,7 +73,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
             lambda: self.createNewLayer(qgis.QGis.WKBPoint, self.ui.cbTriangleRefinementPoints,
                                         { 0 : qgis.QgsField("Element Area", QtCore.QVariant.Double)}))
         self.ui.pbNewPolygons.clicked.connect(
-            lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbBoundaryPolygons,
+            lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbPolygons,
                                         { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
                                          1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
         self.ui.pbNewLines.clicked.connect(
@@ -85,7 +85,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                                         { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
                                          1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
         self.ui.pbNewBoundaryPolygons.clicked.connect(
-            lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbPolygons,
+            lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbBoundaryPolygons,
                                         { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
                                          1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
         
