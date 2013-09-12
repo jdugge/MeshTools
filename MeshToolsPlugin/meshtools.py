@@ -352,6 +352,7 @@ def readMeshNeutral(fileName):
         mesh.elements.numbers = np.arange(nElements)
         mesh.elements.nodes = elements
         mesh.elements.markers = np.ones([nElements,1],dtype=int)
+    return mesh
 
 def readMesh(fileName, type="pickle"):
     type = type.lower()
