@@ -44,6 +44,7 @@ ftu = imp.load_source('ftools_utils', os.path.join(path,'tools','ftools_utils.py
 
 
 import shapely.wkb
+import shapely.geometry
 
 class MeshToolsPlugin:
 
@@ -249,7 +250,8 @@ def listAllEdges(object):
     if type == 'Polygon':
         #object = shapely.geometry.polygon.orient(object)
         if mt.checkPolygonOrientation(object.exterior.coords):
-            object.exterior.coords=object.exterior.coords[::-1]
+            coordinates = list(object.exterior.coords)
+            object = shapely.geometry.Polygon(coordinates[::-1])
         edges.extend(listAllEdges(object.exterior))
         for interior in object.interiors:
             edges.extend(listAllEdges(interior))

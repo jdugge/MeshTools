@@ -339,6 +339,20 @@ def readMeshPickle(fileName):
         mesh = pickle.load(f)
     return mesh
 
+def readMeshNeutral(fileName):
+    mesh = triangleMesh()
+    with open(fileName, 'r') as f:
+        text = f.readlines()
+        nVertices = int(text[0])
+        vertices = np.loadtxt(text[1:nVertices+1])
+        nElements = int(text[nVertices+1])
+        elements = np.loadtxt(text[nVertices+2:nVertices+2+nElements],dtype=int)[:,1:]-1
+        mesh.nodes.coordinates=vertices
+        mesh.nodes.numbers = np.arange(nVertices)
+        mesh.elements.numbers = np.arange(nElements)
+        mesh.elements.nodes = elements
+        mesh.elements.markers = np.ones([nElements,1],dtype=int)
+
 def readMesh(fileName, type="pickle"):
     type = type.lower()
     
