@@ -170,7 +170,11 @@ def buildMesh(geometry, algorithm="EasyMesh", triangleAngle=0, triangleArea=0):
         mesh.elements.numbers = range(len(mesh.elements.nodes))
         mesh.elements.markers = [1]*len(mesh.elements.nodes)
         return mesh
-
+    elif algorithm=="Netgen":
+        tempFileFD, tempFileName = tempfile.mkstemp(suffix=".in2d", text=True)
+        writeNetgenInput(geometry, tempFileName)
+        mesh = runNetgen(tempFileName)
+        return mesh
     
 def writeEasyMeshInput(geometry, filename):
     '''Write graph to a file in a format that can be used
@@ -191,6 +195,26 @@ def writeEasyMeshInput(geometry, filename):
         f.write('\n' + str(len(geometry.edges)) + '\n')
         for index,edge in enumerate(geometry.asNodeIndices()):
             f.write(str(index) + '\t' + '\t'.join([str(component) for component in edge]) + '\t1\n')
+
+def writeNetgenInput(geometry, filename):
+    '''Write graph to a .in2d file suitable for meshing using Netgen'''
+    with open(filename, 'w') as f:
+        f.write("splinecurves2dv2\n\n" +
+        "# Grading factor\n" +
+        "2\n\n")
+        f.write("points\n")
+        for index, (node, length) in enumerate(zip(geometry.nodesList(),
+                                                   geometry.lengthAttributesList()
+                                                   )
+                                               ):
+            f.write(str(index+1) + '\t')
+            f.write('\t'.join([str(component) for component in node]))
+            f.write('\t -maxh=' + str(length) + '\n')
+        f.write('\nsegments\n')
+        for index,edge in enumerate(geometry.asNodeIndices()):
+            f.write('1\t0\t2\t' + '\t'.join([str(component+1) for component in edge]) + '\n')
+        f.write('\n\nmaterials\n' + 
+                '1\tdomain1')
 
 def runEasyMesh(filename):
     rootfilename = os.path.join(os.path.dirname(filename),os.path.splitext(os.path.basename(filename))[0])
@@ -233,7 +257,11 @@ def readEasyMeshOutput(rootfilename):
             mesh.elements.markers[i] = int(line[12])
     return mesh
 
-
+def runNetgen(filename):
+    rootfilename = os.path.join(os.path.dirname(filename),os.path.splitext(os.path.basename(filename))[0])
+    subprocess.call(["netgen", "-batchmode","-geofile=",filename])
+    mesh = readMeshNeutral("/tmp/out.mesh")
+    return mesh
 
 def readGridBuilderSlice(filename):
     mesh = triangleMesh()
@@ -364,5 +392,7 @@ def readMesh(fileName, type="pickle"):
         pass
     elif type == "gb" or type == "gridbuilder":
         mesh = readGridBuilderSlice(fileName)
+    elif type == "netgen" or type == "neutral":
+        mesh =readMeshNeutral(fileName)
     
     return mesh

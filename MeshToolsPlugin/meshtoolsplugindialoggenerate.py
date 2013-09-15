@@ -43,7 +43,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         # Set up the user interface from Designer.
         self.ui = Ui_MeshToolsPlugin()
         self.ui.setupUi(self)
-        self.ui.cbAlgorithm.addItems(['EasyMesh','Triangle'])
+        self.ui.cbAlgorithm.addItems(['EasyMesh','Triangle', 'Netgen'])
         self.ui.cbAlgorithm.setCurrentIndex(1)
         if (platform.system()=='Windows'):
             self.ui.cbAlgorithm.setEnabled(False)
@@ -103,7 +103,8 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                                          (self.ui.cbPoints, qgis.QGis.Point),
                                          (self.ui.cbTriangleBoundaryLines, qgis.QGis.Line),
                                          (self.ui.cbTriangleBoundaryPoints, qgis.QGis.Point),
-                                         (self.ui.cbTriangleRefinementPoints, qgis.QGis.Point)]:
+                                         (self.ui.cbTriangleRefinementPoints, qgis.QGis.Point),
+                                         (self.ui.cbNetgenBoundaryPolygons, qgis.QGis.Polygon)]:
             combobox.clear()
             combobox.addItem('')
             combobox.addItems(ftu.getLayerNames([geometryType]))
@@ -202,7 +203,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                              triangleEdgeTypeValue=edgeTypeValue,
                              triangleEdgeTypeAttribute=edgeTypeAttribute,
                              meshName=self.ui.leMeshName.text())
-        else:
+        elif self.ui.cbAlgorithm.currentText() == "Triangle":
             boundaryLayerName = self.ui.cbTriangleBoundaryPolygons.currentText()
             if boundaryLayerName == "":
                 QtGui.QMessageBox.warning(self, 'Mesh Tools',
@@ -225,4 +226,12 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                              triangleArea=triangleArea,
                              regionLayerName=self.ui.cbTriangleRefinementPoints.currentText(),
                              regionAttributeName=self.ui.cbTriangleArea.currentText())
-
+        elif self.ui.cbAlgorithm.currentText() == "Netgen":
+            boundaryLayerName = self.ui.cbNetgenBoundaryPolygons.currentText()
+            if boundaryLayerName == "":
+                QtGui.QMessageBox.warning(self, 'Mesh Tools',
+                                    "Please select a polygon layer for the boundary of the meshing area")
+                return
+            mtp.generateMesh(boundaryLayerName,
+                             meshName=self.ui.leMeshName.text(),
+                             algorithm="Netgen")

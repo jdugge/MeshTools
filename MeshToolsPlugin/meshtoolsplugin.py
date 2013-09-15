@@ -209,6 +209,8 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
                                 regionValues)
         mesh = mt.buildMesh(graph, "Triangle", triangleAngle=triangleAngle,
                             triangleArea=triangleArea)
+    if algorithm=="Netgen":
+        mesh = mt.buildMesh(graph, "Netgen")
     createMemoryMeshLayer(mesh, meshName)
     del mesh
 
