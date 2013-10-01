@@ -55,7 +55,7 @@ class MeshToolsPlugin:
         self.plugin_dir = QFileInfo(QgsApplication.qgisUserDbFilePath()).path() + "/python/plugins/meshtoolsplugin"
         # initialize locale
         localePath = ""
-        locale = QSettings().value("locale/userLocale").toString()[0:2]
+        locale = QSettings().value("locale/userLocale")[0:2]
 
         if QFileInfo(self.plugin_dir).exists():
             localePath = self.plugin_dir + "/i18n/meshtoolsplugin_" + locale + ".qm"
@@ -218,18 +218,15 @@ def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, trian
                             triangleEdgeTypeAttribute, triangleEdgeTypeValue):
     layer = ftu.getVectorLayerByName(layerName)
     provider = layer.dataProvider()
-    lengthAttributeID = provider.fieldNameIndex(triangleEdgeLengthAttribute)
-    typeAttributeID = provider.fieldNameIndex(triangleEdgeTypeAttribute)
-    provider.select([lengthAttributeID, typeAttributeID])
-    feature = QgsFeature()
-    while provider.nextFeature(feature):
-        if lengthAttributeID != -1:
-            edgeLength = feature.attributeMap()[lengthAttributeID].toFloat()[0]
+    fieldnames = [field.name() for field in provider.fields()]
+    for feature in  provider.getFeatures():
+        if triangleEdgeLengthAttribute in fieldnames:
+            edgeLength = feature[triangleEdgeLengthAttribute]
         else:
             edgeLength = triangleEdgeLengthValue
         
-        if typeAttributeID != -1:
-            edgeType = feature.attributeMap()[typeAttributeID].toInt()[0]
+        if triangleEdgeTypeAttribute in fieldnames:
+            edgeType = feature[triangleEdgeTypeAttribute]
         else:
             edgeType = triangleEdgeTypeValue
         #typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]

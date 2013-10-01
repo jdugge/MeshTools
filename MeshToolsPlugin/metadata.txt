@@ -10,7 +10,7 @@
 
 [general]
 name=Mesh Tools
-qgisMinimumVersion=1.8
+qgisMinimumVersion=2.0
 description=Generate and Display unstructured triangular meshes
 version=0.1
 author=Juernjakob Dugge

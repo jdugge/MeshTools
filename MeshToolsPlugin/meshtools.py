@@ -259,8 +259,14 @@ def readEasyMeshOutput(rootfilename):
 
 def runNetgen(filename):
     rootfilename = os.path.join(os.path.dirname(filename),os.path.splitext(os.path.basename(filename))[0])
-    subprocess.call(["netgen", "-batchmode","-geofile=",filename])
-    mesh = readMeshNeutral("/tmp/out.mesh")
+    log = open('/tmp/log.txt', "w")
+    log.write(filename)
+    subprocess.call(["netgen", "-batchmode",
+                     "-geofile=" + filename,
+                     "-meshfile=" + rootfilename + ".mesh",
+                     "-meshfiletype=Neutral Format"])
+    log.close()
+    mesh = readMeshNeutral(rootfilename+".mesh")
     return mesh
 
 def readGridBuilderSlice(filename):
@@ -393,6 +399,6 @@ def readMesh(fileName, type="pickle"):
     elif type == "gb" or type == "gridbuilder":
         mesh = readGridBuilderSlice(fileName)
     elif type == "netgen" or type == "neutral":
-        mesh =readMeshNeutral(fileName)
+        mesh = readMeshNeutral(fileName)
     
     return mesh
