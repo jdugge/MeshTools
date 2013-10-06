@@ -48,7 +48,10 @@ class pslGraph():
     def nodesList(self):
         '''List of all unique node coordinates in the graph,
         in no particular order'''
-        return list(set(itertools.chain.from_iterable(self.edges)))
+        # Flatten edge list
+        nodes = [ node for edge in self.edges for node in edge]
+        nodes.sort()
+        return list([nodes for nodes,_ in itertools.groupby(nodes)])
     def asNodeIndices(self):
         '''Graph expressed in terms of node indices,
         indices corresponding to the output of pslGraph.nodesList()'''
@@ -81,7 +84,6 @@ def checkPolygonOrientation(polygons):
       [x_b2, y_b2],
       [x_b3, y_b3]],
       ...]]] and returns a vector of the orientations (1=ccw, -1=cw)'''
-    polygons = np.array([polygons])
     return np.sign(np.sum(np.cross(polygons,np.roll(polygons,-1,1)),1))
 
 class triangleMesh():
@@ -140,7 +142,7 @@ class meshElements():
             self.curIndex=0
             raise StopIteration
 
-def buildMesh(geometry, algorithm="EasyMesh", triangleAngle=0, triangleArea=0):
+def buildMesh(geometry, algorithm="EasyMesh", triangleAngle=0, triangleArea=0, netgenGrading=1):
     if algorithm=="EasyMesh":
         tempFileFD, tempFileName = tempfile.mkstemp(suffix=".d", text=True)
         tempFileBaseName, tempFileExtension = os.path.splitext(tempFileName)
@@ -172,7 +174,7 @@ def buildMesh(geometry, algorithm="EasyMesh", triangleAngle=0, triangleArea=0):
         return mesh
     elif algorithm=="Netgen":
         tempFileFD, tempFileName = tempfile.mkstemp(suffix=".in2d", text=True)
-        writeNetgenInput(geometry, tempFileName)
+        writeNetgenInput(geometry, tempFileName, grading = netgenGrading)
         mesh = runNetgen(tempFileName)
         return mesh
     
@@ -196,12 +198,12 @@ def writeEasyMeshInput(geometry, filename):
         for index,edge in enumerate(geometry.asNodeIndices()):
             f.write(str(index) + '\t' + '\t'.join([str(component) for component in edge]) + '\t1\n')
 
-def writeNetgenInput(geometry, filename):
+def writeNetgenInput(geometry, filename, grading):
     '''Write graph to a .in2d file suitable for meshing using Netgen'''
     with open(filename, 'w') as f:
         f.write("splinecurves2dv2\n\n" +
         "# Grading factor\n" +
-        "2\n\n")
+        str(grading) + "\n\n")
         f.write("points\n")
         for index, (node, length) in enumerate(zip(geometry.nodesList(),
                                                    geometry.lengthAttributesList()
@@ -218,7 +220,7 @@ def writeNetgenInput(geometry, filename):
 
 def runEasyMesh(filename):
     rootfilename = os.path.join(os.path.dirname(filename),os.path.splitext(os.path.basename(filename))[0])
-    subprocess.call(["Easy", filename,"+a","3"])
+    subprocess.call(["EasyMesh", filename,"+a","3"])
     mesh = readEasyMeshOutput(rootfilename)
     return mesh
     

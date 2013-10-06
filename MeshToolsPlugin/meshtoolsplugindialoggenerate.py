@@ -96,6 +96,8 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         self.ui.cbBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
         self.ui.cbTriangleBoundaryPolygons.clear()
         self.ui.cbTriangleBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
+        self.ui.cbNetgenBoundaryPolygons.clear()
+        self.ui.cbNetgenBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
         
         
         for (combobox, geometryType) in [(self.ui.cbPolygons, qgis.QGis.Polygon),
@@ -103,8 +105,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                                          (self.ui.cbPoints, qgis.QGis.Point),
                                          (self.ui.cbTriangleBoundaryLines, qgis.QGis.Line),
                                          (self.ui.cbTriangleBoundaryPoints, qgis.QGis.Point),
-                                         (self.ui.cbTriangleRefinementPoints, qgis.QGis.Point),
-                                         (self.ui.cbNetgenBoundaryPolygons, qgis.QGis.Polygon)]:
+                                         (self.ui.cbTriangleRefinementPoints, qgis.QGis.Point)]:
             combobox.clear()
             combobox.addItem('')
             combobox.addItems(ftu.getLayerNames([geometryType]))
@@ -232,6 +233,11 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                 QtGui.QMessageBox.warning(self, 'Mesh Tools',
                                     "Please select a polygon layer for the boundary of the meshing area")
                 return
+            if self.ui.cbNetgen.isChecked():
+                netgenGrading = float(self.ui.leNetgenGrading.text())
+            else:
+                netgenGrading = 1
             mtp.generateMesh(boundaryLayerName,
                              meshName=self.ui.leMeshName.text(),
-                             algorithm="Netgen")
+                             algorithm="Netgen",
+                             netgenGrading = netgenGrading)

@@ -43,9 +43,6 @@ path = os.path.dirname(fTools.__file__)
 ftu = imp.load_source('ftools_utils', os.path.join(path,'tools','ftools_utils.py'))
 
 
-import shapely.wkb
-import shapely.geometry
-
 class MeshToolsPlugin:
 
     def __init__(self, iface):
@@ -186,7 +183,7 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
                  triangleEdgeLengthValue=1, triangleEdgeLengthAttribute='',
                  triangleEdgeTypeValue=1, triangleEdgeTypeAttribute='', meshName="Mesh",
                  algorithm="EasyMesh", triangleAngle=0, triangleArea=0,
-                 regionLayerName="",regionAttributeName=""):
+                 regionLayerName="",regionAttributeName="", netgenGrading=1):
     # Process the polygon layer
     graph = mt.pslGraph()
     graph = addLayerFeaturesToGraph(boundaryLayerName, graph, triangleEdgeLengthAttribute, triangleEdgeLengthValue, triangleEdgeTypeAttribute, triangleEdgeTypeValue)
@@ -210,7 +207,7 @@ def generateMesh(boundaryLayerName='', polygonLayerName='',
         mesh = mt.buildMesh(graph, "Triangle", triangleAngle=triangleAngle,
                             triangleArea=triangleArea)
     if algorithm=="Netgen":
-        mesh = mt.buildMesh(graph, "Netgen")
+        mesh = mt.buildMesh(graph, "Netgen", netgenGrading = netgenGrading)
     createMemoryMeshLayer(mesh, meshName)
     del mesh
 
@@ -229,34 +226,43 @@ def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, trian
             edgeType = feature[triangleEdgeTypeAttribute]
         else:
             edgeType = triangleEdgeTypeValue
-        #typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]
-        geometry = shapely.wkb.loads(feature.geometry().asWkb())
+        geometry = feature.geometry()
         graph.addEdges(listAllEdges(geometry), edgeLength, edgeType)
-        #edgelist = zip(edgelist,itertools.cycle([(lengthAttribute, typeAttribute)]))
-        #with open('edgelist.pickle','w') as f:
-        #    pickle.dump(edgelist,f)
     return graph
 
 def listAllEdges(object):
-    type = object.geom_type
+    type = object.wkbType()
     edges = list()
-    if type == 'Point':
-        coord = list(object.coords)
+    if type == qgis.QGis.WKBPoint:
+        coord = [tuple([object.asPoint().x(), object.asPoint().y()])]
         edges.extend([(coord[0],coord[0])])
-    if type == 'LineString' or type == 'LinearRing':
-        coords = list(object.coords)
+        
+    elif type == qgis.QGis.WKBLineString:
+        coords = object.geometry().asPolyline()
+        coords = [tuple([coord.x(), coord.y()]) for coord in coords]
         edges.extend(zip(coords[:-1],coords[1:]))
-    if type == 'Polygon':
-        #object = shapely.geometry.polygon.orient(object)
-        if mt.checkPolygonOrientation(object.exterior.coords):
-            coordinates = list(object.exterior.coords)
-            object = shapely.geometry.Polygon(coordinates[::-1])
-        edges.extend(listAllEdges(object.exterior))
-        for interior in object.interiors:
-            edges.extend(listAllEdges(interior))
-    elif type == 'MultiPolygon':
-        for geom in object.geoms:
-            edges.extend(listAllEdges(geom))
+        
+    elif type == qgis.QGis.WKBPolygon:
+        geometry = object.asPolygon()
+        orientations = mt.checkPolygonOrientation(geometry)
+        
+        # Check if outer ring is counterclockwise, reverse if not
+        if orientations[0] == -1:
+            geometry[0] = geometry[0][::-1]
+        # Add the arcs to the edge list
+        coords = [tuple([coord.x(), coord.y()]) for coord in geometry[0]]
+        edges.extend(zip(coords[:-1],coords[1:]))
+        
+        # Check if inner rings are clockwise, reverse
+        for i, g in enumerate(geometry[1:], 1):
+            if orientations[i] == 1:
+                geometry[i] = geometry[i][::-1]
+            coords = [tuple([coord.x(), coord.y()]) for coord in geometry[i]]
+            edges.extend(zip(coords[:-1],coords[1:]))
+            
+    elif type == qgis.QGis.WKBMultiPolygon:
+        for polygon in object.geometry().asPolygon():
+            edges.extend(listAllEdges(qgis.QGis.QgsGeometry.fromPolygon(polygon)))
     return edges
 
 def listLayerPointsWithAttribute(layerName, attribute, defaultValue=100):
