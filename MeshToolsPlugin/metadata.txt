@@ -10,11 +10,11 @@
 
 [general]
 name=Mesh Tools
-qgisMinimumVersion=1.8
+qgisMinimumVersion=2.6
 description=Generate and Display unstructured triangular meshes
-version=0.1
+version=0.2
 author=Juernjakob Dugge
-email=juernjakob.dugge@uni-tuebingen.de
+email=juernjakob@gmail.com
 
 # end of mandatory metadata
 
