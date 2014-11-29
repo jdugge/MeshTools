@@ -52,24 +52,13 @@ class MeshToolsPlugin:
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
-        self.plugin_dir = QFileInfo(QgsApplication.qgisUserDbFilePath()).path() + "/python/plugins/meshtoolsplugin"
-        # initialize locale
-        localePath = ""
-        locale = QSettings().value("locale/userLocale").toString()[0:2]
-
-        if QFileInfo(self.plugin_dir).exists():
-            localePath = self.plugin_dir + "/i18n/meshtoolsplugin_" + locale + ".qm"
-
-        if QFileInfo(localePath).exists():
-            self.translator = QTranslator()
-            self.translator.load(localePath)
-
-            if qVersion() > '4.3.3':
-                QCoreApplication.installTranslator(self.translator)
+        self.plugin_dir = QFileInfo(
+            QgsApplication.qgisUserDbFilePath()
+            ).path() + "/python/plugins/meshtoolsplugin"
 
         # Create the dialog (after translation) and keep reference
         self.dlgGenerate = MeshToolsPluginDialogGenerate(self.iface)
-        
+
 
     def initGui(self):
         # Create actions
@@ -83,7 +72,7 @@ class MeshToolsPlugin:
             QIcon(":/plugins/meshtoolsplugin/icon_savemesh.svg"),
             u"Save Mesh", self.iface.mainWindow())
 
-        
+
         # Connect actions to functions
         self.actionGenerate.triggered.connect(self.runGenerate)
         self.actionAdd.triggered.connect(self.runAdd)
@@ -93,18 +82,18 @@ class MeshToolsPlugin:
         self.iface.addToolBarIcon(self.actionGenerate)
         self.iface.addToolBarIcon(self.actionAdd)
         self.iface.addToolBarIcon(self.actionSave)
-        
+
         self.iface.addPluginToMenu(u"&Mesh Tools", self.actionGenerate)
         self.iface.addPluginToMenu(u"&Mesh Tools", self.actionAdd)
         self.iface.addPluginToMenu(u"&Mesh Tools", self.actionSave)
-        
+
 
     def unload(self):
         # Remove the plugin menu item and icon
         self.iface.removePluginMenu(u"&Mesh Tools", self.actionGenerate)
         self.iface.removePluginMenu(u"&Mesh Tools", self.actionAdd)
         self.iface.removePluginMenu(u"&Mesh Tools", self.actionSave)
-        
+
         self.iface.removeToolBarIcon(self.actionGenerate)
         self.iface.removeToolBarIcon(self.actionAdd)
         self.iface.removeToolBarIcon(self.actionSave)
@@ -124,9 +113,9 @@ class MeshToolsPlugin:
             # do something useful (delete the line containing pass and
             # substitute with your code)
             pass
-    
+
     def runAdd(self):
-        fileName = str(QFileDialog.getOpenFileName(self.dlgGenerate, 'Open file', 
+        fileName = str(QFileDialog.getOpenFileName(self.dlgGenerate, 'Open file',
                 '', "Mesh Tools object (*.pickle);;GridBuilder slice (*.xyc);;All files (*)"))
         if fileName:
             baseName, extension = os.path.splitext(fileName)
@@ -136,11 +125,11 @@ class MeshToolsPlugin:
                 type = "gb"
             mesh = mt.readMesh(fileName,type)
             self.createMemoryMeshLayer(mesh)
-    
+
     def runSave(self, mesh):
         layer = self.iface.activeLayer()
         if hasattr(layer, 'mesh'):
-            fileName = str(QFileDialog.getSaveFileName(self.dlgGenerate, 'Save mesh file', 
+            fileName = str(QFileDialog.getSaveFileName(self.dlgGenerate, 'Save mesh file',
                                                        "","GMS 2DM Mesh (*.2dm)"))
             if fileName:
                 mt.writeMeshGMS(layer.mesh, fileName)
@@ -161,7 +150,7 @@ class MeshToolsPlugin:
             if writer.hasError() != QgsVectorFileWriter.NoError:
                 print "Error when creating shapefile: ", writer.hasError()
             del writer
-    
+
 def createMemoryMeshLayer(mesh, name="Mesh"):
     vl = QgsVectorLayer("Polygon", name,  "memory")
     pr = vl.dataProvider()
@@ -178,9 +167,9 @@ def createMemoryMeshLayer(mesh, name="Mesh"):
     QgsMapLayerRegistry.instance().addMapLayer(vl)
     vl.mesh = mesh
     del mesh
-        
-  
-        
+
+
+
 def generateMesh(boundaryLayerName='', polygonLayerName='',
                  lineLayerName='', pointLayerName='',
                  triangleEdgeLengthValue=1, triangleEdgeLengthAttribute='',
@@ -227,7 +216,7 @@ def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, trian
             edgeLength = feature.attributeMap()[lengthAttributeID].toFloat()[0]
         else:
             edgeLength = triangleEdgeLengthValue
-        
+
         if typeAttributeID != -1:
             edgeType = feature.attributeMap()[typeAttributeID].toInt()[0]
         else:
