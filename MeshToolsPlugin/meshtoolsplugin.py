@@ -144,8 +144,11 @@ class MeshToolsPlugin:
             except OSError:
                  pass
             crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
-            fields = { 0 : QgsField("Length", QVariant.Double),
-                      1 : QgsField("Type", QVariant.Int) }
+            fields = QgsFields()
+            fields.append(
+                qgis.QgsField("Length", pyqt.QVariant.Double),
+                qgis.QgsField("Type", pyqt.QVariant.Int)
+            )
             writer = QgsVectorFileWriter(fname, "CP1250", fields, geometryType, crs, "ESRI Shapefile")
             if writer.hasError() != QgsVectorFileWriter.NoError:
                 print "Error when creating shapefile: ", writer.hasError()
@@ -211,12 +214,12 @@ def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, trian
     typeAttributeID = provider.fieldNameIndex(triangleEdgeTypeAttribute)
     for feature in provider.getFeatures():
         if lengthAttributeID != -1:
-            edgeLength = feature.attributeMap()[lengthAttributeID].toFloat()[0]
+            edgeLength = feature.attributes()[lengthAttributeID]
         else:
             edgeLength = triangleEdgeLengthValue
 
         if typeAttributeID != -1:
-            edgeType = feature.attributeMap()[typeAttributeID].toInt()[0]
+            edgeType = feature.attributes()[typeAttributeID]
         else:
             edgeType = triangleEdgeTypeValue
         #typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]
@@ -253,13 +256,11 @@ def listLayerPointsWithAttribute(layerName, attribute, defaultValue=100):
     layer = ftu.getVectorLayerByName(layerName)
     provider = layer.dataProvider()
     attributeID = provider.fieldNameIndex(attribute)
-    provider.select([attributeID])
-    feature = QgsFeature()
     coordinates = list()
     attributeValues = list()
-    while provider.nextFeature(feature):
+    for feature in provider.getFeatures():
         if attributeID != -1:
-            attributeValue = feature.attributeMap()[attributeID].toFloat()[0]
+            attributeValue = feature.attributes()[attributeID]
         else:
             attributeValue = defaultValue
         coordinates.append(tuple(feature.geometry().asPoint()))

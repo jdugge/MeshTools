@@ -17,7 +17,7 @@ import PyQt4.QtCore as pyqt
 
 
 from qgis.core import *
-log = lambda m: QgsMessageLog.logMessage(m,'My Plugin') 
+log = lambda m: QgsMessageLog.logMessage(m,'My Plugin')
 
 
 class pslGraph():
@@ -175,7 +175,7 @@ def buildMesh(geometry, algorithm="EasyMesh", triangleAngle=0, triangleArea=0):
         writeNetgenInput(geometry, tempFileName)
         mesh = runNetgen(tempFileName)
         return mesh
-    
+
 def writeEasyMeshInput(geometry, filename):
     '''Write graph to a file in a format that can be used
     by the EasyMesh mesh generator'''
@@ -213,7 +213,7 @@ def writeNetgenInput(geometry, filename):
         f.write('\nsegments\n')
         for index,edge in enumerate(geometry.asNodeIndices()):
             f.write('1\t0\t2\t' + '\t'.join([str(component+1) for component in edge]) + '\n')
-        f.write('\n\nmaterials\n' + 
+        f.write('\n\nmaterials\n' +
                 '1\tdomain1')
 
 def runEasyMesh(filename):
@@ -221,7 +221,7 @@ def runEasyMesh(filename):
     subprocess.call(["Easy", filename,"+a","3"])
     mesh = readEasyMeshOutput(rootfilename)
     return mesh
-    
+
 def readEasyMeshOutput(rootfilename):
     '''Read the output of an EasyMesh run.
     Expects the root file name (without '.d')'''
@@ -239,17 +239,17 @@ def readEasyMeshOutput(rootfilename):
             mesh.nodes.numbers[i] = int(line[0][0:-1])
             mesh.nodes.coordinates[i] = [float(line[1]), float(line[2])]
             mesh.nodes.markers[i] = int(line[3])
-    
+
     # Read elements file
     # <element number:> <i> <j> <k> <ei> <ej> <ek> <si> <sj> <sk> <xV> <yV> <marker>
     with open(''.join((rootfilename,'.e'))) as f:
         csvreader = csv.reader(f, delimiter=' ',skipinitialspace=True)
         numberOfLines = int(csvreader.next()[0])
-        
+
         mesh.elements.numbers = np.zeros((numberOfLines), dtype=np.int)
         mesh.elements.nodes = np.zeros((numberOfLines,3), dtype=np.int)
         mesh.elements.markers = np.zeros((numberOfLines), dtype=np.int)
-        
+
         for i in range(numberOfLines):
             line = csvreader.next()
             mesh.elements.numbers[i] = int(line[0][0:-1])
@@ -277,7 +277,7 @@ def readGridBuilderSlice(filename):
     mesh.nodes.numbers = np.arange(nNodes)
     mesh.nodes.coordinates = data
     mesh.nodes.markers = np.ones([nNodes,1], dtype=int)
-    
+
     # Element incidences
     gbIN3dtype = np.dtype('3i')
     f = open(''.join([filename,'.in3']))
@@ -298,11 +298,14 @@ def writeMeshShapefile(mesh, fileName, crs=None):
             os.remove(fileName)
         except OSError:
             pass
-        fields = { 0 : qgis.QgsField("ID", pyqt.QVariant.Int),
-                  1 : qgis.QgsField("Marker", pyqt.QVariant.Int),
-                  2 : qgis.QgsField("Node1", pyqt.QVariant.Int),
-                  3 : qgis.QgsField("Node2", pyqt.QVariant.Int),
-                  4 : qgis.QgsField("Node3", pyqt.QVariant.Int)  }
+        fields = QgsFields()
+        fields.append(
+            qgis.QgsField("ID", pyqt.QVariant.Int),
+            qgis.QgsField("Marker", pyqt.QVariant.Int),
+            qgis.QgsField("Node1", pyqt.QVariant.Int),
+            qgis.QgsField("Node2", pyqt.QVariant.Int),
+            qgis.QgsField("Node3", pyqt.QVariant.Int)
+        )
         writer = qgis.QgsVectorFileWriter(fileName, "utf-8", fields, qgis.QGis.WKBPolygon, crs, "ESRI Shapefile")
         if writer.hasError() != qgis.QgsVectorFileWriter.NoError:
             print "Error when creating shapefile: ", writer.hasError()
@@ -348,7 +351,7 @@ def writeFractureShapefile(fractures, fileName, crs=None):
 def writeMeshGMS(mesh, filename):
     VerticesString = [' '.join( ['ND', str(index+1), ' '.join(map(str, node))] ) for index,node in enumerate(mesh.nodes.coordinates)]
     TrianglesString = [' '.join( ['E3T', str(index+1), ' '.join(map(str, triangle)), '1'] ) for index,triangle in enumerate(mesh.elements.nodes+1)]
-    
+
     with open(filename,'w') as f:
         f.write('MESH2D\n')
         for vertex in VerticesString:
@@ -384,7 +387,7 @@ def readMeshNeutral(fileName):
 
 def readMesh(fileName, type="pickle"):
     type = type.lower()
-    
+
     if type == "pickle":
         mesh = readMeshPickle(fileName)
     elif type == "gms":
@@ -394,5 +397,5 @@ def readMesh(fileName, type="pickle"):
         mesh = readGridBuilderSlice(fileName)
     elif type == "netgen" or type == "neutral":
         mesh =readMeshNeutral(fileName)
-    
+
     return mesh

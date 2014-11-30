@@ -49,55 +49,55 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
             self.ui.cbAlgorithm.setEnabled(False)
         #self.ui.cbPolygons.currentIndexChanged.connect(
         #    lambda: mtp.setAttributeComboBox(self, self.ui.cbLength))
-        
+
         # Trigger repopulation of attribute comboboxes with changes layer comboboxes
         self.ui.cbBoundaryPolygons.currentIndexChanged.connect(self.populateAttributeComboBoxes)
         self.ui.cbPolygons.currentIndexChanged.connect(self.populateAttributeComboBoxes)
         self.ui.cbLines.currentIndexChanged.connect(self.populateAttributeComboBoxes)
         self.ui.cbPoints.currentIndexChanged.connect(self.populateAttributeComboBoxes)
-        
+
         self.ui.cbTriangleRefinementPoints.currentIndexChanged.connect(self.populateTriangleComboBox)
-        
+
         self.ui.cbPolygons.currentIndexChanged.emit(0)
         self.ui.pbGenerate.clicked.connect(self.generateMesh)
         self.ui.pbTriangleNewPoints.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBPoint, self.ui.cbTriangleBoundaryPoints,
-                                        { 0 : qgis.QgsField("Element Area", QtCore.QVariant.Double)}))
+                                        [qgis.QgsField("Element Area", QtCore.QVariant.Double)]))
         self.ui.pbTriangleNewPolygons.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbTriangleBoundaryPolygons,
-                                        { 0 : qgis.QgsField("Element Area", QtCore.QVariant.Double)}))
+                                        [qgis.QgsField("Element Area", QtCore.QVariant.Double)]))
         self.ui.pbTriangleNewLines.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBLineString, self.ui.cbTriangleBoundaryLines,
-                                        { 0 : qgis.QgsField("Element Area", QtCore.QVariant.Double)}))
+                                        [qgis.QgsField("Element Area", QtCore.QVariant.Double)]))
         self.ui.pbTriangleRefinementNewPoints.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBPoint, self.ui.cbTriangleRefinementPoints,
-                                        { 0 : qgis.QgsField("Element Area", QtCore.QVariant.Double)}))
+                                        [qgis.QgsField("Element Area", QtCore.QVariant.Double)]))
         self.ui.pbNewPolygons.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbPolygons,
-                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
-                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
+                                        [qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         qgis.QgsField("Edge Type", QtCore.QVariant.Double)]))
         self.ui.pbNewLines.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBLineString, self.ui.cbLines,
-                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
-                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
+                                        [qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         qgis.QgsField("Edge Type", QtCore.QVariant.Double)]))
         self.ui.pbNewPoints.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBPoint, self.ui.cbPoints,
-                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
-                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
+                                        [qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         qgis.QgsField("Edge Type", QtCore.QVariant.Double)]))
         self.ui.pbNewBoundaryPolygons.clicked.connect(
             lambda: self.createNewLayer(qgis.QGis.WKBPolygon, self.ui.cbBoundaryPolygons,
-                                        { 0 : qgis.QgsField("Edge Length", QtCore.QVariant.Double),
-                                         1 : qgis.QgsField("Edge Type", QtCore.QVariant.Double)}))
-        
-         
+                                        [qgis.QgsField("Edge Length", QtCore.QVariant.Double),
+                                         qgis.QgsField("Edge Type", QtCore.QVariant.Double)]))
+
+
     def populateLayerComboBoxes(self):
         # Boundary polygons are always needed, so don't include an empty entry in those comboBoxes
         self.ui.cbBoundaryPolygons.clear()
         self.ui.cbBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
         self.ui.cbTriangleBoundaryPolygons.clear()
         self.ui.cbTriangleBoundaryPolygons.addItems(ftu.getLayerNames([qgis.QGis.Polygon]))
-        
-        
+
+
         for (combobox, geometryType) in [(self.ui.cbPolygons, qgis.QGis.Polygon),
                                          (self.ui.cbLines, qgis.QGis.Line),
                                          (self.ui.cbPoints, qgis.QGis.Point),
@@ -108,10 +108,10 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
             combobox.clear()
             combobox.addItem('')
             combobox.addItems(ftu.getLayerNames([geometryType]))
-            
+
         #mtp.populateComboBox(self.ui.cbPolygons, [qgis.QGis.WKBPolygon], allowRaster=False)
         #self.ui.cbLength.addItems(["Length","Type"])
-    
+
     def populateAttributeComboBoxes(self):
         self.ui.cbLength.clear()
         self.ui.cbType.clear()
@@ -125,7 +125,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         #QtCore.QStringList(fieldNames)
         self.ui.cbLength.addItems(list(fieldNames))
         self.ui.cbType.addItems(list(fieldNames))
-    
+
     def populateTriangleComboBox(self):
         self.ui.cbTriangleArea.clear()
         fieldNames = set()
@@ -137,7 +137,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
         self.ui.cbTriangleArea.addItems(list(fieldNames))
 
     def createNewLayer(self, geometryType, comboBox, fields):
-        fname = QtGui.QFileDialog.getSaveFileName(self, 'Open file', 
+        fname = QtGui.QFileDialog.getSaveFileName(self, 'Open file',
                                         "", "Shapefile (*.shp);;All files (*)")
         fname = os.path.splitext(str(fname))[0]+'.shp'
         layername = os.path.splitext(os.path.basename(str(fname)))[0]
@@ -157,19 +157,22 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
     def showDialogAndDisconnect(self):
         self.show()
         self.iface.actionToggleEditing().triggered.disconnect(self.showDialogAndDisconnect)
-        
-    def createShapefile(self, fname, geometryType, fields):
+
+    def createShapefile(self, fname, geometryType, fieldlist):
         if fname != "":
             try:
                 os.remove(fname)
             except OSError:
                  pass
             crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+            fields = qgis.QgsFields()
+            for field in fieldlist:
+                fields.append(field)
             writer = qgis.QgsVectorFileWriter(fname, "CP1250", fields, geometryType, crs, "ESRI Shapefile")
             if writer.hasError() != qgis.QgsVectorFileWriter.NoError:
                 print "Error when creating shapefile: ", writer.hasError()
             del writer
-    
+
     def generateMesh(self):
         if self.ui.cbAlgorithm.currentText() == "EasyMesh":
             boundaryLayerName = self.ui.cbBoundaryPolygons.currentText()
@@ -177,18 +180,18 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
                 QtGui.QMessageBox.warning(self, 'Mesh Tools',
                                     "Please select a polygon layer for the boundary of the meshing area")
                 return
-            
+
             # Default edge length value
             edgeLengthValue = float(self.ui.leLength.text())
-            
+
             # Default edge type value
             edgeTypeValue = self.ui.sbType.value()
-            
+
             if self.ui.chkbLengthFromLayer.isChecked():
                 edgeLengthAttribute = self.ui.cbLength.currentText()
             else:
                 edgeLengthAttribute = ""
-            
+
             if self.ui.chkbTypeFromLayer.isChecked():
                 edgeTypeAttribute = self.ui.cbType.currentText()
             else:
@@ -196,7 +199,7 @@ class MeshToolsPluginDialogGenerate(QtGui.QDialog):
             polygonLayerName = self.ui.cbPolygons.currentText()
             lineLayerName = self.ui.cbLines.currentText()
             pointLayerName = self.ui.cbPoints.currentText()
-            
+
             mtp.generateMesh(boundaryLayerName, polygonLayerName, lineLayerName, pointLayerName,
                               triangleEdgeLengthValue=edgeLengthValue,
                              triangleEdgeLengthAttribute=edgeLengthAttribute,
