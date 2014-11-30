@@ -222,12 +222,8 @@ def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, trian
             edgeType = feature.attributes()[typeAttributeID]
         else:
             edgeType = triangleEdgeTypeValue
-        #typeAttribute = feature.attributeMap()[typeAttributeID].toInt()[0]
         geometry = shapely.wkb.loads(feature.geometry().asWkb())
         graph.addEdges(listAllEdges(geometry), edgeLength, edgeType)
-        #edgelist = zip(edgelist,itertools.cycle([(lengthAttribute, typeAttribute)]))
-        #with open('edgelist.pickle','w') as f:
-        #    pickle.dump(edgelist,f)
     return graph
 
 def listAllEdges(object):
