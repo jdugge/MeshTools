@@ -209,9 +209,7 @@ def addLayerFeaturesToGraph(layerName, graph, triangleEdgeLengthAttribute, trian
     provider = layer.dataProvider()
     lengthAttributeID = provider.fieldNameIndex(triangleEdgeLengthAttribute)
     typeAttributeID = provider.fieldNameIndex(triangleEdgeTypeAttribute)
-    provider.select([lengthAttributeID, typeAttributeID])
-    feature = QgsFeature()
-    while provider.nextFeature(feature):
+    for feature in provider.getFeatures():
         if lengthAttributeID != -1:
             edgeLength = feature.attributeMap()[lengthAttributeID].toFloat()[0]
         else:
